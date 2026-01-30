@@ -1,8 +1,7 @@
 using UnityEngine;
 using TMPro;
-using UnityEngine.EventSystems;
 
-public class TMPInputFieldSelector : MonoBehaviour, IPointerUpHandler
+public class TMPInputFieldSelector : MonoBehaviour
 {
     public TMP_InputField inputField;
 
@@ -72,12 +71,6 @@ public class TMPInputFieldSelector : MonoBehaviour, IPointerUpHandler
         {
             maskUI.ClearSelectionMask();
         }
-    }
-
-    public void OnPointerUp(PointerEventData eventData)
-    {
-        // 鼠标抬起时检查
-        CheckSelection();
     }
 
     private void CheckSelection()

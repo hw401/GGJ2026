@@ -100,7 +100,7 @@ GameObject: "InputField" (或任意名称)
 
 【代码逻辑说明】
 ----------------------------------------
-1. TMPInputFieldSelector 每帧检查是否有文本被选中
+1. TMPInputFieldSelector 每帧检查是否有文本被选中（使用 Update() 方法，兼容新版 Input System）
 2. 当检测到选择时，调用 TMPSelectionMaskUI.UpdateSelectionMask()
 3. TMPSelectionMaskUI 计算选中字符的边界框（在文本的局部坐标空间）
 4. 将文本局部坐标转换为遮罩父对象的坐标空间
@@ -109,7 +109,8 @@ GameObject: "InputField" (或任意名称)
 
 【注意事项】
 ----------------------------------------
-- 确保 Canvas 有 EventSystem（UI 交互需要）
+- 代码已兼容 Unity 新版 Input System，不再依赖旧版 EventSystem 的指针事件接口
+- 确保 Canvas 有 EventSystem（UI 交互需要，但代码不依赖 IPointerUpHandler）
 - 确保 TMP_InputField 的 Read Only 设置为 false（如果需要选择功能）
 - 遮罩会自动创建，不需要手动创建 UI Image
 - 遮罩会在失去焦点时自动隐藏
