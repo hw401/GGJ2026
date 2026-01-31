@@ -1,14 +1,21 @@
 using UnityEngine;
-using UnityEngine.SceneManagement; // 必须引用，用于场景加载
 
 public class MainMenuController : MonoBehaviour
 {
+    [Tooltip("要激活的GameObject")]
+    public GameObject targetGameObject;
+
     // 公开方法，供按钮调用
     public void StartGame()
     {
-        // 加载索引为1的场景，或者使用场景名
-        // 确保在 Build Settings 中添加了场景
-        SceneManager.LoadScene(1);
+        if (targetGameObject != null)
+        {
+            targetGameObject.SetActive(true);
+        }
+        else
+        {
+            Debug.LogWarning("MainMenuController: targetGameObject 未赋值");
+        }
     }
 
     public void QuitGame()
