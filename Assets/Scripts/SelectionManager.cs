@@ -18,10 +18,40 @@ public class SelectionManager : Singleton<SelectionManager>
     /// </summary>
     public int GetMaxBlockCount()
     {
-        if (KeywordManager.instance != null && KeywordManager.instance.levelData != null)
+        // 从LevelManager获取当前节点
+        if (LevelManager.instance != null && LevelManager.instance.currentNode != null)
         {
-            return KeywordManager.instance.levelData.maxBlockCount;
+            BaseNodeSO currentNode = LevelManager.instance.currentNode;
+            
+            // 根据节点类型获取content中的maxBlockCount
+            NodeType nodeType = currentNode.GetNodeType();
+            switch (nodeType)
+            {
+                case NodeType.Normal:
+                    NormalNodeSO normalNode = currentNode as NormalNodeSO;
+                    if (normalNode != null && normalNode.content != null)
+                    {
+                        return normalNode.content.maxBlockCount;
+                    }
+                    break;
+                case NodeType.Key:
+                    KeyNodeSO keyNode = currentNode as KeyNodeSO;
+                    if (keyNode != null && keyNode.content != null)
+                    {
+                        return keyNode.content.maxBlockCount;
+                    }
+                    break;
+                case NodeType.QTE:
+                    QTENodeSO qteNode = currentNode as QTENodeSO;
+                    if (qteNode != null && qteNode.content != null)
+                    {
+                        return qteNode.content.maxBlockCount;
+                    }
+                    break;
+            }
         }
+        
+        // 如果无法获取，返回默认值
         return 100; // 默认值
     }
 
@@ -328,12 +358,38 @@ public class SelectionManager : Singleton<SelectionManager>
     /// </summary>
     public void ClearAllSelections()
     {
-        textRanges.Clear();
-
-        // 通知所有UI更新
-        foreach (var kvp in textRanges)
+        // 在清除之前，先保存所有文本组件的引用，以便后续更新UI
+        List<TMP_Text> textComponents = new List<TMP_Text>(textRanges.Keys);
+        
+        // 也保存临时Range中的文本组件（可能不在textRanges中）
+        foreach (var kvp in tempRanges)
         {
-            RefreshUI(kvp.Key);
+            if (!textComponents.Contains(kvp.Key))
+            {
+                textComponents.Add(kvp.Key);
+            }
+        }
+        
+        // 清除所有Range
+        textRanges.Clear();
+        
+        // 清除所有临时Range
+        tempRanges.Clear();
+
+        // 通知所有UI更新（清除黑框）
+        foreach (var textComponent in textComponents)
+        {
+            RefreshUI(textComponent);
+        }
+        
+        // 额外：确保清除所有场景中的 SelectionMaskUI（以防有遗漏）
+        SelectionMaskUI[] allMaskUIs = FindObjectsOfType<SelectionMaskUI>();
+        foreach (var maskUI in allMaskUIs)
+        {
+            if (maskUI != null)
+            {
+                maskUI.UpdateAllSelectionMasks();
+            }
         }
         
         // 更新剩余黑块数显示

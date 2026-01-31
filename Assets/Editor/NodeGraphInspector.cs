@@ -354,7 +354,7 @@ public class NodeGraphEnhancedInspector : Editor
         }
 
         // 选择保存路径
-        string folderPath = "Assets/Data/Nodes";
+        string folderPath = "Assets/ScriptableObject/Nodes";
         if (!AssetDatabase.IsValidFolder(folderPath))
         {
             System.IO.Directory.CreateDirectory(folderPath);
