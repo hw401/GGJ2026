@@ -108,6 +108,12 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
             {
                 SelectionManager.instance.SetTempRange(textComponent, tempRange);
             }
+            
+            // 更新剩余黑块数显示（包括临时Range）
+            if (UIManager.instance != null)
+            {
+                UIManager.instance.UpdateRemainingBlockCountWithTemp(textComponent);
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -163,6 +169,12 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
         {
             SelectionManager.instance.SetTempRange(textComponent, null);
         }
+        
+        // 更新剩余黑块数显示（临时Range已清除）
+        if (UIManager.instance != null)
+        {
+            UIManager.instance.UpdateRemainingBlockCount();
+        }
 
         if (dragStartIndex >= 0 && dragEndIndex >= 0 && SelectionManager.instance != null)
         {
@@ -170,12 +182,9 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
             int start = Mathf.Min(dragStartIndex, dragEndIndex);
             int end = Mathf.Max(dragStartIndex, dragEndIndex);
 
-            // 如果范围有效，添加到SelectionManager
-            if (start != end)
-            {
-                SelectionManager.instance.AddSelection(textComponent, start, end, true);
-                Debug.Log($"选区: [{start}, {end}]");
-            }
+            // 添加到SelectionManager（包括单个字符的情况）
+            SelectionManager.instance.AddSelection(textComponent, start, end, true);
+            Debug.Log($"选区: [{start}, {end}]");
         }
 
         // 清除临时Range
@@ -204,15 +213,91 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
         {
             dragEndIndex = charIndex;
             
-            // 更新临时Range
+            // 计算临时Range
             int start = Mathf.Min(dragStartIndex, dragEndIndex);
             int end = Mathf.Max(dragStartIndex, dragEndIndex);
-            tempRange = new Range(start, end);
+            Range newTempRange = new Range(start, end);
+
+            // 实时检测黑块数上限
+            if (SelectionManager.instance != null)
+            {
+                var (wouldExceed, totalAfterAdd) = SelectionManager.instance.CheckTempRangeLimit(textComponent, newTempRange, true);
+                
+                if (wouldExceed)
+                {
+                    // 超出限制，计算可用的字符数
+                    int currentUsed = SelectionManager.instance.GetUsedBlockCount();
+                    int maxBlockCount = SelectionManager.instance.GetMaxBlockCount();
+                    int available = maxBlockCount - currentUsed;
+                    
+                    // 如果可用字符数大于0，尝试限制Range的范围
+                    if (available > 0)
+                    {
+                        // 计算当前文本已使用的字符数
+                        int currentTextUsed = SelectionManager.instance.GetUsedBlockCount(textComponent);
+                        
+                        // 模拟合并，计算新Range实际会增加多少字符
+                        var ranges = SelectionManager.instance.GetRanges(textComponent);
+                        Range simulatedRange = new Range(start, end);
+                        int mergedCharCount = 0;
+                        
+                        foreach (var range in ranges)
+                        {
+                            if (simulatedRange.Overlaps(range) || simulatedRange.IsAdjacent(range))
+                            {
+                                mergedCharCount += range.Length;
+                                simulatedRange.Merge(range);
+                            }
+                        }
+                        
+                        // 实际增加的字符数 = 合并后的Range长度 - 被合并的字符数
+                        int actualIncrease = simulatedRange.Length - mergedCharCount;
+                        
+                        // 如果实际增加数 <= 可用字符数，可以使用合并后的Range
+                        if (actualIncrease <= available)
+                        {
+                            newTempRange = simulatedRange;
+                        }
+                        else
+                        {
+                            // 需要限制Range的范围
+                            // 从起点开始，限制到可用字符数（考虑合并）
+                            int maxNewChars = available + mergedCharCount; // 合并后的Range最大长度
+                            int limitedEnd = Mathf.Min(end, start + maxNewChars - 1);
+                            
+                            if (limitedEnd >= start)
+                            {
+                                newTempRange = new Range(start, limitedEnd);
+                            }
+                            else
+                            {
+                                // 无法添加任何字符，不设置临时Range
+                                SelectionManager.instance.SetTempRange(textComponent, null);
+                                return;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        // 没有可用字符，不设置临时Range
+                        SelectionManager.instance.SetTempRange(textComponent, null);
+                        return;
+                    }
+                }
+            }
+
+            tempRange = newTempRange;
 
             // 实时更新UI显示（使用临时Range）
             if (SelectionManager.instance != null)
             {
                 SelectionManager.instance.SetTempRange(textComponent, tempRange);
+            }
+            
+            // 更新剩余黑块数显示（包括临时Range）
+            if (UIManager.instance != null)
+            {
+                UIManager.instance.UpdateRemainingBlockCountWithTemp(textComponent);
             }
         }
     }

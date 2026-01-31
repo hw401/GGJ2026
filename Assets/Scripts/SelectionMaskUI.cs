@@ -21,7 +21,6 @@ public class SelectionMaskUI : MonoBehaviour
     [Range(0f, 1f)]
     public float maskAlpha = 0.3f;
 
-    private RectTransform maskParent;
     private RectTransform textRectTransform;
     private Canvas canvas;
     
@@ -73,29 +72,6 @@ public class SelectionMaskUI : MonoBehaviour
         {
             Debug.LogError("SelectionMaskUI: 找不到 Canvas！");
             return;
-        }
-
-        // 按照思路.txt的建议：不再把黑框作为Text的子物体
-        // 创建或查找 SelectionMaskContainer 作为遮罩的父对象
-        GameObject containerObj = GameObject.Find("SelectionMaskContainer");
-        if (containerObj == null)
-        {
-            // 创建新的容器
-            containerObj = new GameObject("SelectionMaskContainer");
-            containerObj.transform.SetParent(canvas.transform, false);
-            
-            // 设置容器的RectTransform，尽量和Text Area对齐
-            RectTransform containerRT = containerObj.AddComponent<RectTransform>();
-            containerRT.anchorMin = new Vector2(0, 0);
-            containerRT.anchorMax = new Vector2(1, 1);
-            containerRT.sizeDelta = Vector2.zero;
-            containerRT.anchoredPosition = Vector2.zero;
-        }
-        
-        maskParent = containerObj.GetComponent<RectTransform>();
-        if (maskParent == null)
-        {
-            maskParent = containerObj.AddComponent<RectTransform>();
         }
         
         isInitialized = true;

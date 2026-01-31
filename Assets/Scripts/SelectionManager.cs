@@ -14,6 +14,18 @@ public class SelectionManager : Singleton<SelectionManager>
     private Dictionary<TMP_Text, Range> tempRanges = new Dictionary<TMP_Text, Range>();
 
     /// <summary>
+    /// 获取黑块总数限制
+    /// </summary>
+    public int GetMaxBlockCount()
+    {
+        if (KeywordManager.instance != null && KeywordManager.instance.levelData != null)
+        {
+            return KeywordManager.instance.levelData.maxBlockCount;
+        }
+        return 100; // 默认值
+    }
+
+    /// <summary>
     /// 获取指定文本组件的所有Range
     /// </summary>
     public List<Range> GetRanges(TMP_Text textComponent)
@@ -34,6 +46,100 @@ public class SelectionManager : Singleton<SelectionManager>
     public Dictionary<TMP_Text, List<Range>> GetAllRanges()
     {
         return textRanges;
+    }
+
+    /// <summary>
+    /// 计算当前已使用的黑块数（字符数）
+    /// </summary>
+    public int GetUsedBlockCount()
+    {
+        int totalCount = 0;
+        foreach (var kvp in textRanges)
+        {
+            foreach (var range in kvp.Value)
+            {
+                totalCount += range.Length;
+            }
+        }
+        return totalCount;
+    }
+
+    /// <summary>
+    /// 计算指定文本组件已使用的黑块数（字符数）
+    /// </summary>
+    public int GetUsedBlockCount(TMP_Text textComponent)
+    {
+        if (textComponent == null || !textRanges.ContainsKey(textComponent))
+            return 0;
+
+        int count = 0;
+        foreach (var range in textRanges[textComponent])
+        {
+            count += range.Length;
+        }
+        return count;
+    }
+
+    /// <summary>
+    /// 获取剩余黑块数
+    /// </summary>
+    public int GetRemainingBlockCount()
+    {
+        return GetMaxBlockCount() - GetUsedBlockCount();
+    }
+
+    /// <summary>
+    /// 检查临时Range是否会超出黑块数限制
+    /// </summary>
+    /// <param name="textComponent">文本组件</param>
+    /// <param name="tempRange">临时Range</param>
+    /// <param name="autoMerge">是否自动合并</param>
+    /// <returns>是否会超出限制，以及如果添加后的总字符数</returns>
+    public (bool wouldExceed, int totalAfterAdd) CheckTempRangeLimit(TMP_Text textComponent, Range tempRange, bool autoMerge = true)
+    {
+        if (textComponent == null || tempRange == null)
+        {
+            return (false, GetUsedBlockCount());
+        }
+
+        // 计算当前已使用的黑块数（不包括临时Range）
+        int currentUsedCount = GetUsedBlockCount();
+        
+        int maxBlockCount = GetMaxBlockCount();
+        
+        if (!textRanges.ContainsKey(textComponent))
+        {
+            // 没有已有选择，直接检查临时Range的长度
+            int totalAfterAdd = currentUsedCount + tempRange.Length;
+            return (totalAfterAdd > maxBlockCount, totalAfterAdd);
+        }
+
+        var ranges = textRanges[textComponent];
+        Range simulatedRange = new Range(tempRange.startIndex, tempRange.endIndex);
+        
+        if (autoMerge)
+        {
+            // 模拟合并操作
+            int mergedCharCount = 0;
+            foreach (var range in ranges)
+            {
+                if (simulatedRange.Overlaps(range) || simulatedRange.IsAdjacent(range))
+                {
+                    mergedCharCount += range.Length;
+                    simulatedRange.Merge(range);
+                }
+            }
+            
+            // 计算添加后的总字符数
+            int totalAfterAdd = currentUsedCount - mergedCharCount + simulatedRange.Length;
+            return (totalAfterAdd > maxBlockCount, totalAfterAdd);
+        }
+        else
+        {
+            // 不合并，直接检查
+            int totalAfterAdd = currentUsedCount + tempRange.Length;
+            return (totalAfterAdd > maxBlockCount, totalAfterAdd);
+        }
     }
 
     /// <summary>
@@ -64,15 +170,22 @@ public class SelectionManager : Singleton<SelectionManager>
 
         var ranges = textRanges[textComponent];
 
+        // 计算当前已使用的黑块数（在添加新Range之前）
+        int currentUsedCount = GetUsedBlockCount();
+        int maxBlockCount = GetMaxBlockCount();
+        
         if (autoMerge)
         {
             // 查找重叠或相邻的Range并合并
             List<Range> toMerge = new List<Range>();
+            int mergedCharCount = 0; // 被合并的Range的字符数
+            
             for (int i = ranges.Count - 1; i >= 0; i--)
             {
                 if (newRange.Overlaps(ranges[i]) || newRange.IsAdjacent(ranges[i]))
                 {
                     toMerge.Add(ranges[i]);
+                    mergedCharCount += ranges[i].Length; // 记录被合并的字符数
                     ranges.RemoveAt(i);
                 }
             }
@@ -82,6 +195,27 @@ public class SelectionManager : Singleton<SelectionManager>
             {
                 newRange.Merge(range);
             }
+            
+            // 计算添加新Range后的总字符数
+            // 当前已使用 - 被合并的字符数 + 新Range的字符数
+            int totalAfterAdd = currentUsedCount - mergedCharCount + newRange.Length;
+            if (totalAfterAdd > maxBlockCount)
+            {
+                // 超出限制，恢复ranges列表
+                ranges.AddRange(toMerge);
+                Debug.LogWarning($"SelectionManager: 超出黑块限制！当前已使用: {currentUsedCount}, 尝试添加: {newRange.Length}, 被合并: {mergedCharCount}, 限制: {maxBlockCount}");
+                return; // 超出限制，不添加
+            }
+        }
+        else
+        {
+            // 没有合并，直接检查新增的字符数
+            int totalAfterAdd = currentUsedCount + newRange.Length;
+            if (totalAfterAdd > maxBlockCount)
+            {
+                Debug.LogWarning($"SelectionManager: 超出黑块限制！当前已使用: {currentUsedCount}, 尝试添加: {newRange.Length}, 限制: {maxBlockCount}");
+                return; // 超出限制，不添加
+            }
         }
 
         ranges.Add(newRange);
@@ -89,6 +223,9 @@ public class SelectionManager : Singleton<SelectionManager>
 
         // 通知UI更新
         RefreshUI(textComponent);
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
     }
 
     /// <summary>
@@ -118,10 +255,12 @@ public class SelectionManager : Singleton<SelectionManager>
         }
 
         textRanges[textComponent] = newRanges;
-        Debug.Log($"SelectionManager: 移除字符 {charIndex} 所在的选区");
 
         // 通知UI更新
         RefreshUI(textComponent);
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
     }
 
     /// <summary>
@@ -160,6 +299,9 @@ public class SelectionManager : Singleton<SelectionManager>
 
         // 通知UI更新
         RefreshUI(textComponent);
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
     }
 
     /// <summary>
@@ -176,6 +318,9 @@ public class SelectionManager : Singleton<SelectionManager>
 
         // 通知UI更新
         RefreshUI(textComponent);
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
     }
 
     /// <summary>
@@ -190,6 +335,9 @@ public class SelectionManager : Singleton<SelectionManager>
         {
             RefreshUI(kvp.Key);
         }
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
     }
 
     /// <summary>
@@ -313,6 +461,20 @@ public class SelectionManager : Singleton<SelectionManager>
         if (textComponent != null && textRanges.ContainsKey(textComponent))
         {
             textRanges.Remove(textComponent);
+        }
+        
+        // 更新剩余黑块数显示
+        UpdateRemainingBlockCount();
+    }
+
+    /// <summary>
+    /// 更新剩余黑块数显示
+    /// </summary>
+    private void UpdateRemainingBlockCount()
+    {
+        if (UIManager.instance != null)
+        {
+            UIManager.instance.UpdateRemainingBlockCount();
         }
     }
 }
