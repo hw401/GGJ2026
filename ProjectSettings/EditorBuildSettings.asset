@@ -11,4 +11,7 @@ EditorBuildSettings:
   - enabled: 1
     path: Assets/Scenes/InGameLevel.unity
     guid: 2248e2876b00d2e488726165504a98e3
+  - enabled: 1
+    path: Assets/Scenes/Cast.unity
+    guid: 95a6abec9c24b004ab8e26517aa50994
   m_configObjects: {}
