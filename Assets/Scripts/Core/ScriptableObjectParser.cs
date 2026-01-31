@@ -26,7 +26,9 @@ public class ScriptableObjectParser : Singleton<ScriptableObjectParser>
             keywords = new List<KeywordParseResult>(),
             variableChangeRules = new List<VariableChangeRuleParseResult>(),
             maxBlockCount = contentData.maxBlockCount,
-            newspaperImage = contentData.newspaperImage
+            newspaperImage = contentData.newspaperImage,
+            comment = contentData.comment,
+            stickerYPosition = contentData.stickerYPosition
         };
 
         // 解析关键词
@@ -276,6 +278,8 @@ public class NodeContentParseResult
     public List<VariableChangeRuleParseResult> variableChangeRules;
     public int maxBlockCount;
     public Sprite newspaperImage;
+    public string comment;
+    public float stickerYPosition;
 }
 
 /// <summary>

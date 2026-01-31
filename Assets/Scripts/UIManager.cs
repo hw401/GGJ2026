@@ -27,6 +27,12 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("倒计时文本")]
     public TMP_Text countdownText;
 
+    [Tooltip("注释文本")]
+    public TMP_Text commentText;
+
+    [Tooltip("贴纸GameObject")]
+    public GameObject stickerObject;
+
     [Tooltip("进入下一关按钮")]
     public Button nextLevelButton;
 
@@ -57,6 +63,9 @@ public class UIManager : Singleton<UIManager>
         {
             countdownText.enabled = false;
         }
+
+        // 初始化注释文本
+        UpdateCommentText();
     }
 
     /// <summary>
@@ -176,6 +185,144 @@ public class UIManager : Singleton<UIManager>
         else
         {
             contentInputField.text = "";
+        }
+    }
+
+    /// <summary>
+    /// 更新注释文本，从当前节点获取并显示注释
+    /// </summary>
+    public void UpdateCommentText()
+    {
+        if (commentText == null)
+        {
+            return;
+        }
+
+        // 获取当前节点
+        if (LevelManager.instance == null || LevelManager.instance.currentNode == null)
+        {
+            commentText.text = "";
+            return;
+        }
+
+        BaseNodeSO currentNode = LevelManager.instance.currentNode;
+        NodeType nodeType = currentNode.GetNodeType();
+
+        // 根据节点类型获取 content
+        NodeContentData content = null;
+        switch (nodeType)
+        {
+            case NodeType.Normal:
+                NormalNodeSO normalNode = currentNode as NormalNodeSO;
+                content = normalNode?.content;
+                break;
+            case NodeType.Key:
+                KeyNodeSO keyNode = currentNode as KeyNodeSO;
+                content = keyNode?.content;
+                break;
+            case NodeType.QTE:
+                QTENodeSO qteNode = currentNode as QTENodeSO;
+                content = qteNode?.content;
+                break;
+        }
+
+        // 如果有 content，使用解析器解析并获取注释
+        if (content != null)
+        {
+            if (ScriptableObjectParser.instance != null)
+            {
+                NodeContentParseResult parseResult = ScriptableObjectParser.instance.ParseNodeContent(content);
+                if (parseResult != null && !string.IsNullOrEmpty(parseResult.comment))
+                {
+                    commentText.text = parseResult.comment;
+                }
+                else
+                {
+                    commentText.text = content.comment ?? "";
+                }
+            }
+            else
+            {
+                // 如果没有解析器，直接使用 content.comment
+                commentText.text = content.comment ?? "";
+            }
+        }
+        else
+        {
+            commentText.text = "";
+        }
+    }
+
+    /// <summary>
+    /// 更新贴纸位置，从当前节点获取并设置贴纸的Y轴坐标
+    /// </summary>
+    public void UpdateStickerPosition()
+    {
+        if (stickerObject == null)
+        {
+            return;
+        }
+
+        // 获取当前节点
+        if (LevelManager.instance == null || LevelManager.instance.currentNode == null)
+        {
+            return;
+        }
+
+        BaseNodeSO currentNode = LevelManager.instance.currentNode;
+        NodeType nodeType = currentNode.GetNodeType();
+
+        // 根据节点类型获取 content
+        NodeContentData content = null;
+        switch (nodeType)
+        {
+            case NodeType.Normal:
+                NormalNodeSO normalNode = currentNode as NormalNodeSO;
+                content = normalNode?.content;
+                break;
+            case NodeType.Key:
+                KeyNodeSO keyNode = currentNode as KeyNodeSO;
+                content = keyNode?.content;
+                break;
+            case NodeType.QTE:
+                QTENodeSO qteNode = currentNode as QTENodeSO;
+                content = qteNode?.content;
+                break;
+        }
+
+        // 如果有 content，使用解析器解析并获取贴纸Y轴坐标
+        if (content != null)
+        {
+            float yPosition = 0f;
+            if (ScriptableObjectParser.instance != null)
+            {
+                NodeContentParseResult parseResult = ScriptableObjectParser.instance.ParseNodeContent(content);
+                if (parseResult != null)
+                {
+                    yPosition = parseResult.stickerYPosition;
+                }
+                else
+                {
+                    yPosition = content.stickerYPosition;
+                }
+            }
+            else
+            {
+                // 如果没有解析器，直接使用 content.stickerYPosition
+                yPosition = content.stickerYPosition;
+            }
+
+            // 更新贴纸的Y轴坐标（使用RectTransform的anchoredPosition）
+            RectTransform rectTransform = stickerObject.GetComponent<RectTransform>();
+            if (rectTransform != null)
+            {
+                Vector2 currentAnchoredPosition = rectTransform.anchoredPosition;
+                rectTransform.anchoredPosition = new Vector2(currentAnchoredPosition.x, yPosition);
+            }
+            else
+            {
+                Debug.LogWarning("UIManager: stickerObject 没有 RectTransform 组件，无法更新Y轴坐标");
+            }
         }
     }
 

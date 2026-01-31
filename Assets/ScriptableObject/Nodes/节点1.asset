@@ -31,4 +31,6 @@ MonoBehaviour:
         value: 10
     maxBlockCount: 5
     newspaperImage: {fileID: 21300000, guid: 812f1e79967527e498048b0bd6a9c61f, type: 3}
+    comment: "\u8282\u70B91"
+    stickerYPosition: -98.2
   nextNode: {fileID: 11400000, guid: 777ec4c53c2ba534f81c5f1bddc04891, type: 2}

@@ -38,6 +38,7 @@ MonoBehaviour:
         value: 0
     maxBlockCount: 100
     newspaperImage: {fileID: 0}
+    comment: "QTE\u8282\u70B9"
   duration: 10
   successNode: {fileID: 11400000, guid: d5ca98cc32d22ea409d59578715db9ba, type: 2}
   failureNode: {fileID: 11400000, guid: 35be43b1a0472eb49ba0d55d4b4eb03d, type: 2}

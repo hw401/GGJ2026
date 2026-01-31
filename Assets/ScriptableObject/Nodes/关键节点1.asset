@@ -31,6 +31,7 @@ MonoBehaviour:
         value: 0
     maxBlockCount: 10
     newspaperImage: {fileID: 0}
+    comment: "\u5173\u952E\u8282\u70B9"
   branches:
   - branchName: 1
     conditions:

@@ -22,4 +22,13 @@ public class NodeContentData
     [Header("报纸配置")]
     [Tooltip("报纸图片（提交后显示的图片）")]
     public Sprite newspaperImage;
+
+    [Header("注释")]
+    [TextArea(3, 10)]
+    [Tooltip("节点注释（用于显示提示信息）")]
+    public string comment = "";
+
+    [Header("贴纸配置")]
+    [Tooltip("贴纸的Y轴坐标")]
+    public float stickerYPosition = 0f;
 }

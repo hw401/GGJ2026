@@ -24,4 +24,6 @@ MonoBehaviour:
     variableChanges: []
     maxBlockCount: 10
     newspaperImage: {fileID: 0}
+    comment: "\u8282\u70B93"
+    stickerYPosition: -40.9
   nextNode: {fileID: 0}

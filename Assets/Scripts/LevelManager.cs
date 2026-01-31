@@ -623,10 +623,12 @@ public class LevelManager : Singleton<LevelManager>
             }
         }
 
-        // 更新UIManager的内容输入框
+        // 更新UIManager的内容输入框、注释文本和贴纸位置
         if (UIManager.instance != null)
         {
             UIManager.instance.UpdateContentInputField();
+            UIManager.instance.UpdateCommentText();
+            UIManager.instance.UpdateStickerPosition();
         }
 
         // 处理QTE节点的倒计时
