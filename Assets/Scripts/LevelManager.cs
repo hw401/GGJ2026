@@ -431,7 +431,7 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     /// <param name="skipVariableProcessing">是否跳过变量变更处理（如果已经在外部处理过）</param>
     /// <returns>是否成功移动到分支目标节点</returns>
-    private bool ProcessKeyNodeAutomatically(bool skipVariableProcessing = false)
+    private bool ProcessKeyNodeAutomatically(bool skipVariableProcessing = true)
     {
         if (currentNode == null || currentNode.GetNodeType() != NodeType.Key)
         {
