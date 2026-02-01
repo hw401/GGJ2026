@@ -16,5 +16,5 @@ MonoBehaviour:
   nodeName: BE1
   description: 
   endingType: 1
-  cgImage: {fileID: 0}
+  cgImage: {fileID: 21300000, guid: d2b80c9791c97594597dd53628be04a1, type: 3}
   endingDescription: 

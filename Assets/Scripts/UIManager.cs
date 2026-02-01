@@ -2,6 +2,7 @@ using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
 using UnityEngine.EventSystems;
+using UnityEngine.InputSystem;
 
 /// <summary>
 /// UI管理器
@@ -24,6 +25,12 @@ public class UIManager : Singleton<UIManager>
 
     [Tooltip("报纸动画控制器")]
     public Animator newspaperAnimator;
+
+    [Tooltip("CG图片（用于显示结局CG）")]
+    public UnityEngine.UI.Image cgImage;
+
+    [Tooltip("转场GameObject")]
+    public GameObject transitionGameObject;
 
     [Tooltip("倒计时文本")]
     public TMP_Text countdownText;
@@ -127,6 +134,16 @@ public class UIManager : Singleton<UIManager>
             stickerObject.SetActive(false);
         }
 
+        // 设置CG Image和转场GameObject的默认状态（关闭）
+        if (cgImage != null)
+        {
+            cgImage.enabled = false;
+        }
+        if (transitionGameObject != null)
+        {
+            transitionGameObject.SetActive(false);
+        }
+
         // 启动协程，延迟激活第一张贴纸
         StartCoroutine(ActivateFirstStickerAfterDelay());
     }
@@ -147,6 +164,24 @@ public class UIManager : Singleton<UIManager>
 
     void Update()
     {
+        // 检查是否在End节点，如果是则检测鼠标左键输入
+        if (LevelManager.instance != null && LevelManager.instance.currentNode != null)
+        {
+            if (LevelManager.instance.currentNode.GetNodeType() == NodeType.End)
+            {
+                // 使用新版输入系统检测鼠标左键输入
+                Mouse mouse = Mouse.current;
+                if (mouse != null && mouse.leftButton.wasPressedThisFrame)
+                {
+                    if (transitionGameObject != null && !transitionGameObject.activeSelf)
+                    {
+                        transitionGameObject.SetActive(true);
+                        Debug.Log("UIManager: 在End节点检测到鼠标左键输入，已打开转场GameObject");
+                    }
+                }
+            }
+        }
+
         // 如果已经提交成功，保持fillAmount为1，不再更新
         if (hasSubmitted)
         {
@@ -500,6 +535,13 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     private void OnSubmitButtonClicked()
     {
+        // 关闭第一张贴纸
+        if (firstStickerObject != null)
+        {
+            firstStickerObject.SetActive(false);
+            Debug.Log("UIManager: 提交按钮点击，已关闭第一张贴纸");
+        }
+
         if (LevelManager.instance == null)
         {
             Debug.LogWarning("UIManager: LevelManager.instance 为 null");
@@ -699,6 +741,50 @@ public class UIManager : Singleton<UIManager>
         if (submitButton != null)
         {
             submitButton.interactable = true;
+        }
+    }
+
+    /// <summary>
+    /// 更新CG图片（用于显示结局CG）
+    /// </summary>
+    public void UpdateCGImage()
+    {
+        if (cgImage == null)
+        {
+            return;
+        }
+
+        // 获取当前节点
+        if (LevelManager.instance == null || LevelManager.instance.currentNode == null)
+        {
+            return;
+        }
+
+        BaseNodeSO currentNode = LevelManager.instance.currentNode;
+        NodeType nodeType = currentNode.GetNodeType();
+
+        // 如果是End节点，使用CG图片替换并开启Image组件
+        if (nodeType == NodeType.End)
+        {
+            EndNodeSO endNode = currentNode as EndNodeSO;
+            if (endNode != null && endNode.cgImage != null)
+            {
+                cgImage.sprite = endNode.cgImage;
+                cgImage.enabled = true; // 开启Image组件
+                Debug.Log($"UIManager: 已更新CG图片并开启Image组件: {endNode.cgImage.name}");
+            }
+            else
+            {
+                Debug.LogWarning("UIManager: End节点没有配置CG图片");
+            }
+        }
+        else
+        {
+            // 如果不是End节点，关闭CG Image组件
+            if (cgImage != null)
+            {
+                cgImage.enabled = false;
+            }
         }
     }
 

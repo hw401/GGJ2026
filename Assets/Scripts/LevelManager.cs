@@ -641,23 +641,14 @@ public class LevelManager : Singleton<LevelManager>
             UIManager.instance.UpdateContentInputField();
             UIManager.instance.UpdateCommentText();
             UIManager.instance.UpdateStickerPosition();
+            UIManager.instance.UpdateCGImage();
         }
 
-        // 第一次切换节点时，激活贴纸并关闭第一张贴纸
-        if (isFirstNodeSwitch && UIManager.instance != null)
+        // 第一次切换节点时，激活贴纸
+        if (isFirstNodeSwitch && UIManager.instance != null && UIManager.instance.stickerObject != null)
         {
-            if (UIManager.instance.stickerObject != null)
-            {
-                UIManager.instance.stickerObject.SetActive(true);
-                Debug.Log("LevelManager: 第一次切换节点，已激活贴纸");
-            }
-            
-            if (UIManager.instance.firstStickerObject != null)
-            {
-                UIManager.instance.firstStickerObject.SetActive(false);
-                Debug.Log("LevelManager: 第一次切换节点，已关闭第一张贴纸");
-            }
-            
+            UIManager.instance.stickerObject.SetActive(true);
+            Debug.Log("LevelManager: 第一次切换节点，已激活贴纸");
             isFirstNodeSwitch = false; // 只激活一次
         }
 
