@@ -17,18 +17,127 @@ MonoBehaviour:
   description: 
   content:
     text: "\u53CD\u5BF9\u6D3E\u91CD\u70B9\u4EBA\u7269\u8C03\u67E5\u62A5\u544A\n\u62A5\u544A\u65E5\u671F\uFF1A2048\u5E749\u670815\u65E5\n\u5B89\u4E1C\u5C3C\u5965\xB7\u7F57\u5FB7\u91CC\u683C\u65AF
-      \n\u57FA\u672C\u4FE1\u606F\uFF1A\n\u5E74\u9F84\uFF1A42\u5C81\n\u7C4D\u8D2F\u5730\uFF1A\u5361\u62C9\u5E02\n\u804C\u4E1A\uFF1A\u524D\u5361\u62C9\u9A6C\u56FD\u5BB6\u77FF\u4E1A\u516C\u53F8\u5DE5\u7A0B\u5E08\uFF0C\u56E0\u632A\u7528\u516C\u53F8\u516C\u6B3E\u88AB\u5F00\u9664\u3002\n\u6559\u80B2\u80CC\u666F\uFF1A\u7F8E\u56FD\u65E7\u91D1\u5C71\u7406\u5DE5\u5927\u5B66\u7206\u7834\u5DE5\u7A0B\u7855\u58EB\n\u653F\u6CBB\u80CC\u666F\uFF1A\u524D\u53CD\u5BF9\u6D3E\u4EBA\u6C11\u6C11\u4E3B\u515A\u5458\uFF08\u65B0\u95FB\uFF09\uFF0C\u73B0\u201C\u5361\u62C9\u4EBA\u6C11\u9635\u7EBF\u201D\u521B\u59CB\u4EBA\u517C\u9886\u5BFC\u8005\n\u5A5A\u59FB\u60C5\u51B5\uFF1A\u4E0E\u59BB\u5B50\u53CA\u4E24\u4E2A\u5B50\u5973\u5C45\u4F4F\u5728\u5361\u62C9\u5E02\u5DE5\u4EBA\u533A\uFF0C\u59BB\u5B50\u4E3A\u5C0F\u5B66\u6559\u5E08\u3002\u957F\u671F\u5AD6\u5A3C\u3001\u5BB6\u66B4\u59BB\u5B50\u3002\n\u6D77\u5916\u80CC\u666F\uFF1A\u5728A\u56FD\u7559\u5B665\u5E74\uFF0C\u6BD5\u4E1A\u540E\u56DE\u56FD\u4EFB\u6559\u3002\n\u7EC4\u7EC7\u8D44\u91D1\u6765\u6E90\uFF1A\u63A5\u53D7\u7F8E\u56FD\u60C5\u62A5\u673A\u6784\u8D44\u52A9\uFF0C\u6BCF\u6708\u83B7\u5F9710\u4E07\u7F8E\u5143\u7528\u4E8E\u98A0\u8986\u6D3B\u52A8\uFF08\u65B0\u95FB\uFF09\n\u653F\u6CBB\u8BC9\u6C42\uFF1A\u4F01\u56FE\u63A8\u7FFB\u5408\u6CD5\u653F\u5E9C\u3001\u5EFA\u7ACB\u5916\u56FD\u5080\u5121\u653F\u6743\u3001\u5206\u88C2\u56FD\u5BB6\n\u653F\u6CBB\u4E8B\u4EF6\uFF1A\u81EA8\u6708\u8D77\u5728\u9996\u90FD\u7EC4\u7EC77\u6B21\u5927\u89C4\u6A21\u6E38\u884C\uFF0C\u9020\u62101000\u4EBA\u4F24\u4EA1"
+      \n\u57FA\u672C\u4FE1\u606F\uFF1A\n\u5E74\u9F84\uFF1A42\u5C81\n\u7C4D\u8D2F\u5730\uFF1A\u5361\u62C9\u5E02\n\u804C\u4E1A\uFF1A\u524D\u5361\u62C9\u9A6C\u56FD\u5BB6\u77FF\u4E1A\u516C\u53F8\u5DE5\u7A0B\u5E08\uFF0C\u56E0\u632A\u7528\u516C\u53F8\u516C\u6B3E\u88AB\u5F00\u9664\u3002\n\u6559\u80B2\u80CC\u666F\uFF1A\u7F8E\u56FD\u65E7\u91D1\u5C71\u7406\u5DE5\u5927\u5B66\u7206\u7834\u5DE5\u7A0B\u7855\u58EB\n\u653F\u6CBB\u80CC\u666F\uFF1A\u524D\u53CD\u5BF9\u6D3E\u4EBA\u6C11\u6C11\u4E3B\u515A\u5458\uFF0C\u73B0\u201C\u5361\u62C9\u4EBA\u6C11\u9635\u7EBF\u201D\u521B\u59CB\u4EBA\u517C\u9886\u5BFC\u8005\n\u5A5A\u59FB\u60C5\u51B5\uFF1A\u4E0E\u59BB\u5B50\u53CA\u4E24\u4E2A\u5B50\u5973\u5C45\u4F4F\u5728\u5361\u62C9\u5E02\u5DE5\u4EBA\u533A\uFF0C\u59BB\u5B50\u4E3A\u5C0F\u5B66\u6559\u5E08\u3002\u957F\u671F\u5AD6\u5A3C\u3001\u5BB6\u66B4\u59BB\u5B50\u3002\n\u6D77\u5916\u80CC\u666F\uFF1A\u5728A\u56FD\u7559\u5B665\u5E74\uFF0C\u6BD5\u4E1A\u540E\u56DE\u56FD\u4EFB\u6559\u3002\n\u7EC4\u7EC7\u8D44\u91D1\u6765\u6E90\uFF1A\u63A5\u53D7\u7F8E\u56FD\u60C5\u62A5\u673A\u6784\u8D44\u52A9\uFF0C\u6BCF\u6708\u83B7\u5F9710\u4E07\u7F8E\u5143\u7528\u4E8E\u98A0\u8986\u6D3B\u52A8\n\u653F\u6CBB\u8BC9\u6C42\uFF1A\u4F01\u56FE\u63A8\u7FFB\u5408\u6CD5\u653F\u5E9C\u3001\u5EFA\u7ACB\u5916\u56FD\u5080\u5121\u653F\u6743\u3001\u5206\u88C2\u56FD\u5BB6\n\u653F\u6CBB\u4E8B\u4EF6\uFF1A\u81EA8\u6708\u8D77\u5728\u9996\u90FD\u7EC4\u7EC77\u6B21\u5927\u89C4\u6A21\u6E38\u884C\uFF0C\u9020\u62101000\u4EBA\u4F24\u4EA1"
     textSize: 14
     keywords:
     - id: 1
-      startIndex: 0
-      endIndex: 0
+      startIndex: 78
+      endIndex: 89
     - id: 2
-      startIndex: 4
-      endIndex: 7
-    variableChanges: []
-    maxBlockCount: 10
+      startIndex: 116
+      endIndex: 126
+    - id: 3
+      startIndex: 175
+      endIndex: 185
+    - id: 4
+      startIndex: 215
+      endIndex: 241
+    - id: 5
+      startIndex: 294
+      endIndex: 298
+    variableChanges:
+    - conditions:
+      - keywordID: 1
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 5
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 1
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 5
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    maxBlockCount: 73
     newspaperImage: {fileID: 0}
     comment: "\u5BA1\u8BA1\u90E8\u6CE8\uFF1A\u5BA1\u8BA1\u90E8\u771F\u662F\u6CA1\u4EC0\u4E48\u597D\u4EBA\u624B\u4E86...\u52A1\u5FC5\u628A\u592A\u79BB\u8C31\u7684\u4E1C\u897F\u76D6\u4E00\u76D6\u3002"
     stickerYPosition: -40.9
-  nextNode: {fileID: 0}
+  nextNode: {fileID: 11400000, guid: 3185951007f1701439d8de3148cb1051, type: 2}

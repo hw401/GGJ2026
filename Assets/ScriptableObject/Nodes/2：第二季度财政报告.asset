@@ -17,30 +17,119 @@ MonoBehaviour:
   description: 
   content:
     text: "\u5361\u62C9\u9A6C\u96F7\u65AF\u5171\u548C\u56FD\u8D22\u653F\u90E8   
-      2048\u5E74\u7B2C\u4E8C\u5B63\u5EA6\u8D22\u653F\u62A5\u544A\n\u62A5\u544A\u65E5\u671F\uFF1A2048\u5E747\u67085\u65E5\n\n...\n\u4E09\u3001\u653F\u5E9C\u8D44\u4EA7\u53D8\u52A8\n\u672C\u5B63\u5EA6\u653F\u5E9C\u6301\u6709\u56FD\u5185\u8D44\u4EA7\u51CF\u5C11156\u4EBF\u96F7\u4E9A\u5C14\uFF0C\u4E3A\u5E94\u5BF9\u8D22\u653F\u538B\u529B\uFF0C\u653F\u5E9C\u672C\u5B63\u5EA6\u52A0\u901F\u63A8\u8FDB\u56FD\u6709\u8D44\u4EA7\u79C1\u6709\u5316\u8FDB\u7A0B\u3002\u4E3B\u8981\u5305\u62EC\u4EE5\u4E0B\u9879\u76EE\uFF1A\n\u56FD\u6709\u4F01\u4E1A\u80A1\u6743\u51FA\u552E\uFF1A34\u4EBF\u96F7\u4E9A\u5C14\n\u5361\u62C9\u9A6C\u56FD\u5BB6\u77FF\u4E1A\u516C\u53F8\u80A1\u6743\u51FA\u552E\uFF1A\u5411\u7F8E\u56FDMetalDev\u516C\u53F8\u51FA\u552E\u957F\u4E45\u7A7A\u95F2\u7684\u5F00\u91C7\u8BBE\u5907\uFF0C\u4EA4\u6613\u4EF7\u683C12\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u56FD\u5BB6\u7535\u529B\u516C\u53F8\u90E8\u5206\u80A1\u6743\uFF1A\u5411Salazar\u8D44\u672C\uFF08\u65B0\u95FB\uFF09\u51FA\u552E22%\u80A1\u6743\uFF0C\u83B7\u5F978\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u5361\u62C9\u9A6C\u56FD\u5BB6\u94F6\u884C\u8D44\u4EA7\u5265\u79BB\uFF1A\u5C06\u94F6\u884C\u6301\u6709\u768434\u5904\u57CE\u5E02\u6838\u5FC3\u5730\u6BB5\u5546\u4E1A\u5730\u4EA7\u4EE5\u53CA\u8D35\u91D1\u5C5E\u50A8\u5907\u6253\u5305\u7ED9Salazar\u8D44\u672C\uFF08\u65B0\u95FB\uFF09\u3002\u4EA4\u6613\u4EF7\u683C9\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u56FD\u5BB6\u7535\u4FE1\u516C\u53F8\u80A1\u6743\uFF1A\u51FA\u552E18%\u80A1\u6743\uFF0C\u6536\u51655\u4EBF\u96F7\u4E9A\u5C14\u3002\n\n\u5176\u4ED6\u8D44\u4EA7\u5904\u7F6E\uFF1A33\u4EBF\u96F7\u4E9A\u5C14\n\u5305\u62EC\u653F\u5E9C\u8F66\u8F86\u62CD\u5356\u3001\u95F2\u7F6E\u529E\u516C\u697C\u51FA\u552E\u3001\u6218\u7565\u7CAE\u98DF\u50A8\u5907\uFF08\u65B0\u95FB\uFF09\u6E05\u4ED3\u7B49\uFF0C\u7528\u4E8E\u5F25\u8865\u8D22\u653F\u7F3A\u53E3\u3002\n..."
+      2048\u5E74\u7B2C\u4E8C\u5B63\u5EA6\u8D22\u653F\u62A5\u544A\n\u62A5\u544A\u65E5\u671F\uFF1A2048\u5E747\u67085\u65E5\n\n...\n\u4E09\u3001\u653F\u5E9C\u8D44\u4EA7\u53D8\u52A8\n\u672C\u5B63\u5EA6\u653F\u5E9C\u6301\u6709\u56FD\u5185\u8D44\u4EA7\u51CF\u5C11156\u4EBF\u96F7\u4E9A\u5C14\uFF0C\u4E3A\u5E94\u5BF9\u8D22\u653F\u538B\u529B\uFF0C\u653F\u5E9C\u672C\u5B63\u5EA6\u52A0\u901F\u63A8\u8FDB\u56FD\u6709\u8D44\u4EA7\u79C1\u6709\u5316\u8FDB\u7A0B\u3002\u4E3B\u8981\u5305\u62EC\u4EE5\u4E0B\u9879\u76EE\uFF1A\n\u56FD\u6709\u4F01\u4E1A\u80A1\u6743\u51FA\u552E\uFF1A34\u4EBF\u96F7\u4E9A\u5C14\n\u5361\u62C9\u9A6C\u56FD\u5BB6\u77FF\u4E1A\u516C\u53F8\u80A1\u6743\u51FA\u552E\uFF1A\u5411\u7F8E\u56FDMetalDev\u516C\u53F8\u51FA\u552E\u957F\u4E45\u7A7A\u95F2\u7684\u5F00\u91C7\u8BBE\u5907\uFF0C\u4EA4\u6613\u4EF7\u683C12\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u56FD\u5BB6\u7535\u529B\u516C\u53F8\u90E8\u5206\u80A1\u6743\uFF1A\u5411Salazar\u8D44\u672C\u51FA\u552E22%\u80A1\u6743\uFF0C\u83B7\u5F978\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u5361\u62C9\u9A6C\u56FD\u5BB6\u94F6\u884C\u8D44\u4EA7\u5265\u79BB\uFF1A\u5C06\u94F6\u884C\u6301\u6709\u768434\u5904\u57CE\u5E02\u6838\u5FC3\u5730\u6BB5\u5546\u4E1A\u5730\u4EA7\u4EE5\u53CA\u8D35\u91D1\u5C5E\u50A8\u5907\u6253\u5305\u7ED9Salazar\u8D44\u672C\u3002\u4EA4\u6613\u4EF7\u683C9\u4EBF\u96F7\u4E9A\u5C14\u3002\n\u56FD\u5BB6\u7535\u4FE1\u516C\u53F8\u80A1\u6743\uFF1A\u51FA\u552E18%\u80A1\u6743\uFF0C\u6536\u51655\u4EBF\u96F7\u4E9A\u5C14\u3002\n\n\u5176\u4ED6\u8D44\u4EA7\u5904\u7F6E\uFF1A33\u4EBF\u96F7\u4E9A\u5C14\n\u5305\u62EC\u653F\u5E9C\u8F66\u8F86\u62CD\u5356\u3001\u95F2\u7F6E\u529E\u516C\u697C\u51FA\u552E\u3001\u6218\u7565\u7CAE\u98DF\u50A8\u5907\u6E05\u4ED3\u7B49\uFF0C\u7528\u4E8E\u5F25\u8865\u8D22\u653F\u7F3A\u53E3\u3002\n..."
     textSize: 14
     keywords:
     - id: 1
-      startIndex: 0
-      endIndex: 0
+      startIndex: 71
+      endIndex: 78
+    - id: 2
+      startIndex: 195
+      endIndex: 204
+    - id: 3
+      startIndex: 262
+      endIndex: 271
+    - id: 4
+      startIndex: 341
+      endIndex: 347
     variableChanges:
     - conditions:
-      - keywordID: 
-        requiredSelectedState: 0
+      - keywordID: 1
+        requiredSelectedState: 1
       modifications:
       - targetVariable: 0
         operation: 0
-        value: 0
-    maxBlockCount: 10
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 1
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 0
+        value: 1
+    maxBlockCount: 35
     newspaperImage: {fileID: 0}
     comment: "\u5BA1\u8BA1\u90E8\u6CE8\uFF1A\u8D22\u653F\u62A5\u544A\u8FD9\u90E8\u5206\u4FE1\u606F\u4F46\u8FD8\u6709\u4E00\u4E9B\u6570\u5B57\u5BF9\u4E0D\u4E0A\uFF0C\u6709\u4E9B\u8BCD\u6BD4\u8F83\u523A\u6FC0\uFF0C\u9700\u8981\u4F60\u91CD\u65B0\u7EE7\u7EED\u5904\u7406\u3002"
     stickerYPosition: 0
   branches:
   - branchName: 1
     conditions:
-    - variable: 0
-      comparison: 0
-      valueA: 10
+    - variable: 1
+      comparison: 3
+      valueA: 9
       valueB: 0
-    targetNode: {fileID: 11400000, guid: 96073bfd13e5dcd4fa9f7fa211fc4f13, type: 2}
-  defaultNode: {fileID: 11400000, guid: 777ec4c53c2ba534f81c5f1bddc04891, type: 2}
+    targetNode: {fileID: 11400000, guid: 35be43b1a0472eb49ba0d55d4b4eb03d, type: 2}
+  - branchName: 1
+    conditions:
+    - variable: 0
+      comparison: 3
+      valueA: 1
+      valueB: 0
+    targetNode: {fileID: 11400000, guid: 52490c67bd16d7940929ba9529a98742, type: 2}
+  defaultNode: {fileID: 11400000, guid: 804cd6280dabf8740ac28c3c9d1b5a14, type: 2}
