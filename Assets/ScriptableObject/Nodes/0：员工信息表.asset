@@ -21,11 +21,81 @@ MonoBehaviour:
     textSize: 44.54
     keywords:
     - id: 1
-      startIndex: 0
+      startIndex: 8
+      endIndex: 15
+    - id: 2
+      startIndex: 19
+      endIndex: 20
+    - id: 3
+      startIndex: 27
+      endIndex: 36
+    - id: 4
+      startIndex: 42
+      endIndex: 47
+    - id: 5
+      startIndex: 58
+      endIndex: 66
+    - id: 6
+      startIndex: 72
+      endIndex: 82
+    - id: 7
+      startIndex: 88
+      endIndex: 119
+    - id: 8
+      startIndex: 125
       endIndex: 127
     variableChanges:
     - conditions:
       - keywordID: 1
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 5
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 6
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 7
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 8
         requiredSelectedState: 0
       modifications:
       - targetVariable: 0
