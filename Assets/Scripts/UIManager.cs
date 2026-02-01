@@ -664,6 +664,17 @@ public class UIManager : Singleton<UIManager>
         {
             newspaperAnimator.Play("报纸向左");
             Debug.Log("UIManager: 已播放报纸向左动画");
+            
+            // 播放报纸物体上的音效
+            if (newspaperImage != null)
+            {
+                AudioSource audioSource = newspaperImage.GetComponent<AudioSource>();
+                if (audioSource != null && audioSource.clip != null)
+                {
+                    audioSource.Play();
+                    Debug.Log("UIManager: 已播放报纸音效");
+                }
+            }
         }
 
         // 显示进入下一关按钮（播放"文件袋出现"动画）
@@ -679,6 +690,17 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     private void OnNextLevelButtonClicked()
     {
+        // 播放进入下一关按钮上的音效
+        if (nextLevelButton != null)
+        {
+            AudioSource audioSource = nextLevelButton.GetComponent<AudioSource>();
+            if (audioSource != null && audioSource.clip != null)
+            {
+                audioSource.Play();
+                Debug.Log("UIManager: 已播放进入下一关按钮音效");
+            }
+        }
+        
         if (LevelManager.instance == null)
         {
             Debug.LogWarning("UIManager: LevelManager.instance 为 null");
@@ -772,6 +794,9 @@ public class UIManager : Singleton<UIManager>
                 cgImage.sprite = endNode.cgImage;
                 cgImage.enabled = true; // 开启Image组件
                 Debug.Log($"UIManager: 已更新CG图片并开启Image组件: {endNode.cgImage.name}");
+                
+                // 根据节点名称播放相应的音效序列
+                PlayEndingSoundEffects(endNode);
             }
             else
             {
@@ -786,6 +811,203 @@ public class UIManager : Singleton<UIManager>
                 cgImage.enabled = false;
             }
         }
+    }
+
+    /// <summary>
+    /// 播放结局音效序列
+    /// </summary>
+    /// <param name="endNode">结局节点</param>
+    private void PlayEndingSoundEffects(EndNodeSO endNode)
+    {
+        if (endNode == null || cgImage == null)
+        {
+            return;
+        }
+
+        // 获取CG物体上的所有AudioSource组件
+        AudioSource[] audioSources = cgImage.GetComponents<AudioSource>();
+        if (audioSources == null || audioSources.Length == 0)
+        {
+            Debug.LogWarning("UIManager: CG物体上没有AudioSource组件");
+            return;
+        }
+
+        string nodeName = endNode.nodeName;
+        
+        // 根据节点名称判断结局类型并播放相应的音效
+        if (nodeName == "BE1" || nodeName == "BE2")
+        {
+            // BE1或BE2：先播放枪声2音效，再播放心跳声
+            StartCoroutine(PlayBE1BE2SoundEffects(audioSources));
+        }
+        else if (nodeName == "BE3" || nodeName == "BE4")
+        {
+            // BE3或BE4：播放电视音效
+            StartCoroutine(PlayBE3BE4SoundEffects(audioSources));
+        }
+        else if (nodeName == "TE")
+        {
+            // TE：先播放纸张撕开音效，再播放起身音效
+            StartCoroutine(PlayTESoundEffects(audioSources));
+        }
+    }
+
+    /// <summary>
+    /// 播放BE1/BE2的音效序列（枪声2 -> 心跳声）
+    /// </summary>
+    private System.Collections.IEnumerator PlayBE1BE2SoundEffects(AudioSource[] audioSources)
+    {
+        // 通过AudioClip名称查找对应的AudioSource
+        AudioSource gunSound = FindAudioSourceByClipName(audioSources, "枪声2");
+        AudioSource heartbeatSound = FindAudioSourceByClipName(audioSources, "心跳声");
+        
+        // 如果找不到，尝试通过部分名称匹配
+        if (gunSound == null)
+        {
+            gunSound = FindAudioSourceByClipNameContains(audioSources, "枪声");
+        }
+        if (heartbeatSound == null)
+        {
+            heartbeatSound = FindAudioSourceByClipNameContains(audioSources, "心跳");
+        }
+        
+        // 播放枪声2
+        if (gunSound != null && gunSound.clip != null)
+        {
+            gunSound.Play();
+            Debug.Log($"UIManager: 已播放枪声2音效: {gunSound.clip.name}");
+            // 等待枪声播放完成
+            yield return new WaitForSeconds(gunSound.clip.length);
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: 未找到枪声2音效");
+        }
+        
+        // 播放心跳声
+        if (heartbeatSound != null && heartbeatSound.clip != null)
+        {
+            heartbeatSound.Play();
+            Debug.Log($"UIManager: 已播放心跳声音效: {heartbeatSound.clip.name}");
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: 未找到心跳声音效");
+        }
+    }
+
+    /// <summary>
+    /// 播放BE3/BE4的音效（电视音效）
+    /// </summary>
+    private System.Collections.IEnumerator PlayBE3BE4SoundEffects(AudioSource[] audioSources)
+    {
+        // 通过AudioClip名称查找电视音效
+        AudioSource tvSound = FindAudioSourceByClipName(audioSources, "电视");
+        
+        // 如果找不到，尝试通过部分名称匹配
+        if (tvSound == null)
+        {
+            tvSound = FindAudioSourceByClipNameContains(audioSources, "电视");
+        }
+        
+        // 播放电视音效
+        if (tvSound != null && tvSound.clip != null)
+        {
+            tvSound.Play();
+            Debug.Log($"UIManager: 已播放电视音效: {tvSound.clip.name}");
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: 未找到电视音效");
+        }
+        
+        yield return null;
+    }
+
+    /// <summary>
+    /// 播放TE的音效序列（纸张撕开 -> 起身）
+    /// </summary>
+    private System.Collections.IEnumerator PlayTESoundEffects(AudioSource[] audioSources)
+    {
+        // 通过AudioClip名称查找对应的AudioSource
+        AudioSource paperTearSound = FindAudioSourceByClipName(audioSources, "纸张撕开");
+        AudioSource standUpSound = FindAudioSourceByClipName(audioSources, "起身");
+        
+        // 如果找不到，尝试通过部分名称匹配
+        if (paperTearSound == null)
+        {
+            paperTearSound = FindAudioSourceByClipNameContains(audioSources, "撕开");
+        }
+        if (standUpSound == null)
+        {
+            standUpSound = FindAudioSourceByClipNameContains(audioSources, "起身");
+        }
+        
+        // 播放纸张撕开音效
+        if (paperTearSound != null && paperTearSound.clip != null)
+        {
+            paperTearSound.Play();
+            Debug.Log($"UIManager: 已播放纸张撕开音效: {paperTearSound.clip.name}");
+            // 等待纸张撕开音效播放完成
+            yield return new WaitForSeconds(paperTearSound.clip.length);
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: 未找到纸张撕开音效");
+        }
+        
+        // 播放起身音效
+        if (standUpSound != null && standUpSound.clip != null)
+        {
+            standUpSound.Play();
+            Debug.Log($"UIManager: 已播放起身音效: {standUpSound.clip.name}");
+        }
+        else
+        {
+            Debug.LogWarning("UIManager: 未找到起身音效");
+        }
+    }
+
+    /// <summary>
+    /// 通过AudioClip名称查找AudioSource
+    /// </summary>
+    private AudioSource FindAudioSourceByClipName(AudioSource[] audioSources, string clipName)
+    {
+        if (audioSources == null || string.IsNullOrEmpty(clipName))
+        {
+            return null;
+        }
+        
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (audioSource != null && audioSource.clip != null && audioSource.clip.name == clipName)
+            {
+                return audioSource;
+            }
+        }
+        
+        return null;
+    }
+
+    /// <summary>
+    /// 通过AudioClip名称包含指定字符串查找AudioSource
+    /// </summary>
+    private AudioSource FindAudioSourceByClipNameContains(AudioSource[] audioSources, string clipNameContains)
+    {
+        if (audioSources == null || string.IsNullOrEmpty(clipNameContains))
+        {
+            return null;
+        }
+        
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (audioSource != null && audioSource.clip != null && audioSource.clip.name.Contains(clipNameContains))
+            {
+                return audioSource;
+            }
+        }
+        
+        return null;
     }
 
     // TODO: 实现其他UI功能

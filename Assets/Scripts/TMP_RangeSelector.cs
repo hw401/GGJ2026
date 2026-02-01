@@ -18,6 +18,7 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
     private int dragStartIndex = -1;
     private int dragEndIndex = -1;
     private Range tempRange = null;
+    private AudioSource dragAudioSource = null; // 拖拽时的音效源
 
     void Start()
     {
@@ -55,6 +56,12 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
         if (EventSystem.current == null)
         {
             Debug.LogError("TMP_RangeSelector: 场景中没有 EventSystem！请添加 EventSystem 组件。");
+        }
+        
+        // 获取SelectionManager上的AudioSource组件（用于播放拖拽音效）
+        if (SelectionManager.instance != null)
+        {
+            dragAudioSource = SelectionManager.instance.GetComponent<AudioSource>();
         }
     }
 
@@ -114,6 +121,21 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
             {
                 UIManager.instance.UpdateRemainingBlockCountWithTemp(textComponent);
             }
+            
+            // 播放拖拽音效（如果暂停了则继续播放）
+            if (dragAudioSource != null && dragAudioSource.clip != null)
+            {
+                if (dragAudioSource.isPlaying)
+                {
+                    // 如果正在播放，继续播放（不做任何操作）
+                }
+                else
+                {
+                    // 如果没有播放，开始播放
+                    dragAudioSource.Play();
+                    Debug.Log("TMP_RangeSelector: 已开始播放拖拽音效");
+                }
+            }
         }
         else if (eventData.button == PointerEventData.InputButton.Right)
         {
@@ -164,6 +186,13 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
         isDragging = false;
 
+        // 暂停拖拽音效
+        if (dragAudioSource != null && dragAudioSource.isPlaying)
+        {
+            dragAudioSource.Pause();
+            Debug.Log("TMP_RangeSelector: 已暂停拖拽音效");
+        }
+
         // 清除临时Range显示
         if (SelectionManager.instance != null)
         {
@@ -211,6 +240,12 @@ public class TMP_RangeSelector : MonoBehaviour, IPointerDownHandler, IPointerUpH
 
         if (charIndex >= 0 && charIndex != dragEndIndex)
         {
+            // 确保拖拽音效正在播放
+            if (dragAudioSource != null && dragAudioSource.clip != null && !dragAudioSource.isPlaying)
+            {
+                dragAudioSource.Play();
+            }
+            
             dragEndIndex = charIndex;
             
             // 计算临时Range

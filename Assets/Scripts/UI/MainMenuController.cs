@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 public class MainMenuController : MonoBehaviour
 {
@@ -11,6 +12,9 @@ public class MainMenuController : MonoBehaviour
     // 公开方法，供按钮调用
     public void StartGame()
     {
+        // 播放按钮音效
+        PlayButtonSound();
+        
         // 先激活过场动画
         if (cutsceneGameObject != null)
         {
@@ -42,8 +46,19 @@ public class MainMenuController : MonoBehaviour
         }
     }
 
+    // 重载方法，可以接收按钮GameObject作为参数
+    public void StartGame(GameObject buttonObj)
+    {
+        // 播放按钮音效
+        PlayButtonSound(buttonObj);
+        StartGame();
+    }
+
     public void QuitGame()
     {
+        // 播放按钮音效
+        PlayButtonSound();
+        
         // 打印日志，因为在编辑器中 Application.Quit() 无效
         Debug.Log("游戏退出指令已发出");
         Application.Quit();
@@ -52,5 +67,40 @@ public class MainMenuController : MonoBehaviour
 #if UNITY_EDITOR
         UnityEditor.EditorApplication.isPlaying = false;
 #endif
+    }
+
+    // 重载方法，可以接收按钮GameObject作为参数
+    public void QuitGame(GameObject buttonObj)
+    {
+        // 播放按钮音效
+        PlayButtonSound(buttonObj);
+        QuitGame();
+    }
+
+    /// <summary>
+    /// 播放按钮音效（通过EventSystem获取当前被点击的按钮）
+    /// </summary>
+    private void PlayButtonSound()
+    {
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+        {
+            PlayButtonSound(EventSystem.current.currentSelectedGameObject);
+        }
+    }
+
+    /// <summary>
+    /// 播放按钮音效（通过传入的按钮GameObject）
+    /// </summary>
+    private void PlayButtonSound(GameObject buttonObj)
+    {
+        if (buttonObj != null)
+        {
+            AudioSource audioSource = buttonObj.GetComponent<AudioSource>();
+            if (audioSource != null && audioSource.clip != null)
+            {
+                audioSource.Play();
+                Debug.Log($"MainMenuController: 已播放按钮音效 - {buttonObj.name}");
+            }
+        }
     }
 }

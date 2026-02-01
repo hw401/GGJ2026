@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.Audio;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 using static ES3; // 引入Easy Save 3命名空间
 
 public class SettingsManager : MonoBehaviour
@@ -97,6 +98,44 @@ public class SettingsManager : MonoBehaviour
     // 打开/关闭设置面板的辅助方法
     public void ToggleSettings(bool isOpen)
     {
+        // 播放按钮音效
+        PlayButtonSound();
+        
         settingsPanel.SetActive(isOpen);
+    }
+
+    // 重载方法，可以接收按钮GameObject作为参数
+    public void ToggleSettings(bool isOpen, GameObject buttonObj)
+    {
+        // 播放按钮音效
+        PlayButtonSound(buttonObj);
+        ToggleSettings(isOpen);
+    }
+
+    /// <summary>
+    /// 播放按钮音效（通过EventSystem获取当前被点击的按钮）
+    /// </summary>
+    private void PlayButtonSound()
+    {
+        if (EventSystem.current != null && EventSystem.current.currentSelectedGameObject != null)
+        {
+            PlayButtonSound(EventSystem.current.currentSelectedGameObject);
+        }
+    }
+
+    /// <summary>
+    /// 播放按钮音效（通过传入的按钮GameObject）
+    /// </summary>
+    private void PlayButtonSound(GameObject buttonObj)
+    {
+        if (buttonObj != null)
+        {
+            AudioSource audioSource = buttonObj.GetComponent<AudioSource>();
+            if (audioSource != null && audioSource.clip != null)
+            {
+                audioSource.Play();
+                Debug.Log($"SettingsManager: 已播放按钮音效 - {buttonObj.name}");
+            }
+        }
     }
 }

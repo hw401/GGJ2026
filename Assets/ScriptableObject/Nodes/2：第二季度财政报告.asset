@@ -114,22 +114,22 @@ MonoBehaviour:
         operation: 0
         value: 1
     maxBlockCount: 35
-    newspaperImage: {fileID: 0}
+    newspaperImage: {fileID: 21300000, guid: 5240efc2b231e4d498b6bc08aad5c116, type: 3}
     comment: "\u5BA1\u8BA1\u90E8\u6CE8\uFF1A\u8D22\u653F\u62A5\u544A\u8FD9\u90E8\u5206\u4FE1\u606F\u4F46\u8FD8\u6709\u4E00\u4E9B\u6570\u5B57\u5BF9\u4E0D\u4E0A\uFF0C\u6709\u4E9B\u8BCD\u6BD4\u8F83\u523A\u6FC0\uFF0C\u9700\u8981\u4F60\u91CD\u65B0\u7EE7\u7EED\u5904\u7406\u3002"
     stickerYPosition: 0
   branches:
-  - branchName: 1
+  - branchName: 0
     conditions:
     - variable: 1
       comparison: 3
       valueA: 9
       valueB: 0
-    targetNode: {fileID: 11400000, guid: 35be43b1a0472eb49ba0d55d4b4eb03d, type: 2}
+    targetNode: {fileID: 11400000, guid: 52490c67bd16d7940929ba9529a98742, type: 2}
   - branchName: 1
     conditions:
     - variable: 0
       comparison: 3
       valueA: 1
       valueB: 0
-    targetNode: {fileID: 11400000, guid: 52490c67bd16d7940929ba9529a98742, type: 2}
+    targetNode: {fileID: 11400000, guid: 35be43b1a0472eb49ba0d55d4b4eb03d, type: 2}
   defaultNode: {fileID: 11400000, guid: 804cd6280dabf8740ac28c3c9d1b5a14, type: 2}

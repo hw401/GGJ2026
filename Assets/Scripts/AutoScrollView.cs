@@ -118,19 +118,24 @@ public class AutoScrollView : MonoBehaviour
     {
         while (isScrolling)
         {
+            // 强制更新布局，确保获取准确的内容高度
+            UnityEngine.UI.LayoutRebuilder.ForceRebuildLayoutImmediate(content);
+            
             // 计算可滚动的高度
-            float scrollableHeight = content.rect.height - scrollRect.viewport.rect.height;
+            float contentHeight = content.rect.height;
+            float viewportHeight = scrollRect.viewport.rect.height;
+            float scrollableHeight = contentHeight - viewportHeight;
             
             if (scrollableHeight > 0)
             {
-                // 获取当前滚动位置（0 = 顶部, 1 = 底部）
+                // 获取当前滚动位置（0 = 底部, 1 = 顶部）
                 float currentPosition = scrollRect.verticalNormalizedPosition;
 
-                // 向下滚动
+                // 向下滚动：减小 normalizedPosition（从1到0）
                 float scrollDelta = scrollSpeed * Time.deltaTime / scrollableHeight;
                 float newPosition = currentPosition - scrollDelta;
 
-                // 检查是否到达底部
+                // 检查是否到达底部（normalizedPosition <= 0 表示到达底部）
                 if (newPosition <= 0f)
                 {
                     scrollRect.verticalNormalizedPosition = 0f;
@@ -157,8 +162,31 @@ public class AutoScrollView : MonoBehaviour
             }
             else
             {
-                // 内容不足以滚动，等待一下再检查
-                yield return new WaitForSeconds(0.5f);
+                // 内容不足以滚动，检查是否已经到达底部
+                // 如果内容高度小于等于视口高度，认为已经到达底部
+                if (contentHeight <= viewportHeight)
+                {
+                    scrollRect.verticalNormalizedPosition = 0f;
+                    isScrolling = false;
+                    
+                    // 延迟激活目标GameObject（只激活一次）
+                    if (!hasReachedBottom && targetGameObjectOnReachBottom != null)
+                    {
+                        hasReachedBottom = true;
+                        if (activateCoroutine != null)
+                        {
+                            StopCoroutine(activateCoroutine);
+                        }
+                        activateCoroutine = StartCoroutine(ActivateGameObjectAfterDelay());
+                    }
+                    
+                    break;
+                }
+                else
+                {
+                    // 等待一下再检查，可能内容还在加载
+                    yield return new WaitForSeconds(0.5f);
+                }
             }
 
             yield return null;
