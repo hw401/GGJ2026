@@ -8,6 +8,9 @@ public class NodeContentData
     [Tooltip("节点显示的文本内容")]
     public string text = "";
 
+    [Tooltip("文本字体大小")]
+    public float textSize = 14f;
+
     [Tooltip("关键词列表")]
     public List<KeywordData> keywords = new List<KeywordData>();
 

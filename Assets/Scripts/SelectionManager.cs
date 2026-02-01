@@ -249,7 +249,6 @@ public class SelectionManager : Singleton<SelectionManager>
         }
 
         ranges.Add(newRange);
-        Debug.Log($"SelectionManager: 添加选区 - 文本:{textComponent.name}, 范围:[{newRange.startIndex}, {newRange.endIndex}]");
 
         // 通知UI更新
         RefreshUI(textComponent);

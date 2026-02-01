@@ -23,6 +23,7 @@ public class ScriptableObjectParser : Singleton<ScriptableObjectParser>
         NodeContentParseResult result = new NodeContentParseResult
         {
             text = contentData.text,
+            textSize = contentData.textSize,
             keywords = new List<KeywordParseResult>(),
             variableChangeRules = new List<VariableChangeRuleParseResult>(),
             maxBlockCount = contentData.maxBlockCount,
@@ -274,6 +275,7 @@ public class ScriptableObjectParser : Singleton<ScriptableObjectParser>
 public class NodeContentParseResult
 {
     public string text;
+    public float textSize;
     public List<KeywordParseResult> keywords;
     public List<VariableChangeRuleParseResult> variableChangeRules;
     public int maxBlockCount;

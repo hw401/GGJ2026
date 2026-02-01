@@ -1,6 +1,7 @@
 using UnityEngine;
 using UnityEngine.UI;
 using TMPro;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// UI管理器
@@ -36,12 +37,53 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("进入下一关按钮")]
     public Button nextLevelButton;
 
+    [Header("提交按钮长按设置")]
+    [Tooltip("提交按钮的填充Image（用于显示进度）")]
+    public Image submitFillImage;
+
+    [Tooltip("填充上升速度（每秒）")]
+    [SerializeField]
+    private float fillUpSpeed = 1f;
+
+    [Tooltip("填充下降速度（每秒）")]
+    [SerializeField]
+    private float fillDownSpeed = 1f;
+
+    private float currentFillAmount = 0f;
+    private bool isSubmitting = false;
+    private bool isButtonHeld = false;
+    private bool hasSubmitted = false; // 是否已经提交成功
+
     void Start()
     {
-        // 绑定提交按钮的点击事件
+        // 初始化填充Image
+        if (submitFillImage != null)
+        {
+            submitFillImage.type = Image.Type.Filled;
+            submitFillImage.fillAmount = 0f;
+            currentFillAmount = 0f;
+        }
+
+        // 为提交按钮添加EventTrigger来检测按下和释放
         if (submitButton != null)
         {
-            submitButton.onClick.AddListener(OnSubmitButtonClicked);
+            EventTrigger trigger = submitButton.gameObject.GetComponent<EventTrigger>();
+            if (trigger == null)
+            {
+                trigger = submitButton.gameObject.AddComponent<EventTrigger>();
+            }
+
+            // 添加按下事件
+            EventTrigger.Entry pointerDown = new EventTrigger.Entry();
+            pointerDown.eventID = EventTriggerType.PointerDown;
+            pointerDown.callback.AddListener((data) => { OnSubmitButtonDown(); });
+            trigger.triggers.Add(pointerDown);
+
+            // 添加释放事件
+            EventTrigger.Entry pointerUp = new EventTrigger.Entry();
+            pointerUp.eventID = EventTriggerType.PointerUp;
+            pointerUp.callback.AddListener((data) => { OnSubmitButtonUp(); });
+            trigger.triggers.Add(pointerUp);
         }
 
         // 绑定进入下一关按钮的点击事件
@@ -66,6 +108,77 @@ public class UIManager : Singleton<UIManager>
 
         // 初始化注释文本
         UpdateCommentText();
+    }
+
+    void Update()
+    {
+        // 如果已经提交成功，保持fillAmount为1，不再更新
+        if (hasSubmitted)
+        {
+            if (submitFillImage != null)
+            {
+                submitFillImage.fillAmount = 1f;
+            }
+            return;
+        }
+
+        // 更新填充进度
+        if (submitFillImage != null)
+        {
+            if (isButtonHeld && !isSubmitting)
+            {
+                // 按下时，填充上升
+                currentFillAmount += fillUpSpeed * Time.deltaTime;
+                currentFillAmount = Mathf.Clamp01(currentFillAmount);
+            }
+            else
+            {
+                // 未按下时，填充下降
+                currentFillAmount -= fillDownSpeed * Time.deltaTime;
+                currentFillAmount = Mathf.Clamp01(currentFillAmount);
+            }
+
+            // 更新Image的fillAmount
+            submitFillImage.fillAmount = currentFillAmount;
+
+            // 检查是否达到100%，触发提交
+            if (currentFillAmount >= 1f && !isSubmitting)
+            {
+                isSubmitting = true;
+                OnSubmitButtonClicked();
+                // 提交成功后，保持fillAmount为1，设置标志
+                currentFillAmount = 1f;
+                submitFillImage.fillAmount = 1f;
+                hasSubmitted = true;
+                isSubmitting = false;
+                
+                // 禁用提交按钮，防止再次提交
+                if (submitButton != null)
+                {
+                    submitButton.interactable = false;
+                }
+            }
+        }
+    }
+
+    /// <summary>
+    /// 提交按钮按下事件
+    /// </summary>
+    private void OnSubmitButtonDown()
+    {
+        // 如果已经提交成功，不允许再次按下
+        if (!hasSubmitted)
+        {
+            isButtonHeld = true;
+        }
+    }
+
+    /// <summary>
+    /// 提交按钮释放事件
+    /// </summary>
+    private void OnSubmitButtonUp()
+    {
+        isButtonHeld = false;
     }
 
     /// <summary>
@@ -164,12 +277,27 @@ public class UIManager : Singleton<UIManager>
         // 如果有 content，使用解析器解析并获取文本
         if (content != null)
         {
+            float textSize = content.textSize; // 默认使用content中的textSize
+            
             if (ScriptableObjectParser.instance != null)
             {
                 NodeContentParseResult parseResult = ScriptableObjectParser.instance.ParseNodeContent(content);
-                if (parseResult != null && !string.IsNullOrEmpty(parseResult.text))
+                if (parseResult != null)
                 {
-                    contentInputField.text = parseResult.text;
+                    if (!string.IsNullOrEmpty(parseResult.text))
+                    {
+                        contentInputField.text = parseResult.text;
+                    }
+                    else
+                    {
+                        contentInputField.text = content.text;
+                    }
+                    
+                    // 使用解析结果中的textSize（如果解析器返回了textSize）
+                    if (parseResult.textSize > 0)
+                    {
+                        textSize = parseResult.textSize;
+                    }
                 }
                 else
                 {
@@ -180,6 +308,12 @@ public class UIManager : Singleton<UIManager>
             {
                 // 如果没有解析器，直接使用 content.text
                 contentInputField.text = content.text ?? "";
+            }
+            
+            // 应用文本大小
+            if (contentInputField.textComponent != null && textSize > 0)
+            {
+                contentInputField.textComponent.fontSize = textSize;
             }
         }
         else
@@ -355,7 +489,6 @@ public class UIManager : Singleton<UIManager>
         LevelManager.VariableChangeResult result = LevelManager.instance.ProcessVariableChangesForCurrentNode(textComponent);
 
         // 打印满足的判定条件和数值变化
-        Debug.Log("========== 提交结果 ==========");
         Debug.Log($"节点: {LevelManager.instance.currentNode.nodeName}");
         
         if (result.satisfiedConditions.Count > 0)
@@ -500,6 +633,28 @@ public class UIManager : Singleton<UIManager>
         if (nextLevelButton != null)
         {
             nextLevelButton.gameObject.SetActive(false);
+        }
+
+        // 重置提交状态，允许再次提交
+        ResetSubmitState();
+    }
+
+    /// <summary>
+    /// 重置提交状态，清零fillAmount并允许再次提交
+    /// </summary>
+    private void ResetSubmitState()
+    {
+        hasSubmitted = false;
+        currentFillAmount = 0f;
+        if (submitFillImage != null)
+        {
+            submitFillImage.fillAmount = 0f;
+        }
+        
+        // 重新启用提交按钮
+        if (submitButton != null)
+        {
+            submitButton.interactable = true;
         }
     }
 

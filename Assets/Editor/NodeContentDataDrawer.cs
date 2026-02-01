@@ -42,6 +42,10 @@ public class NodeContentDataDrawer : PropertyDrawer
         var textProp = property.FindPropertyRelative("text");
         height += EditorGUI.GetPropertyHeight(textProp) + EditorGUIUtility.standardVerticalSpacing;
 
+        // textSize字段高度
+        var textSizeProp = property.FindPropertyRelative("textSize");
+        height += EditorGUI.GetPropertyHeight(textSizeProp) + EditorGUIUtility.standardVerticalSpacing;
+
         // 添加关键词按钮高度
         height += EditorGUIUtility.singleLineHeight * 1.5f + EditorGUIUtility.standardVerticalSpacing;
 
@@ -112,6 +116,12 @@ public class NodeContentDataDrawer : PropertyDrawer
         Rect textRect = new Rect(position.x, y, width, EditorGUI.GetPropertyHeight(textProp));
         EditorGUI.PropertyField(textRect, textProp);
         y += textRect.height + EditorGUIUtility.standardVerticalSpacing;
+
+        // textSize字段
+        var textSizeProp = property.FindPropertyRelative("textSize");
+        Rect textSizeRect = new Rect(position.x, y, width, EditorGUI.GetPropertyHeight(textSizeProp));
+        EditorGUI.PropertyField(textSizeRect, textSizeProp);
+        y += textSizeRect.height + EditorGUIUtility.standardVerticalSpacing;
 
         // 常驻的添加关键词按钮
         Rect addButtonRect = new Rect(position.x, y, width, EditorGUIUtility.singleLineHeight * 1.5f);

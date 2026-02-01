@@ -1,0 +1,128 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b7014c88d12edea44b2e757c5a835528, type: 3}
+  m_Name: "1\uFF1A\u77FF\u4EA7\u8D44\u6E90\u62A5\u544A"
+  m_EditorClassIdentifier: 
+  _nodeID: 2
+  nodeName: "1\uFF1A\u77FF\u4EA7\u8D44\u6E90\u62A5\u544A"
+  description: 
+  content:
+    text: "\u5361\u62C9\u9A6C\u96F7\u65AF\u7A00\u571F\u50A8\u91CF\u63A2\u6D4B\u62A5\u544A\nMetalDev\u516C\u53F8
+      \u5730\u8D28\u52D8\u63A2\u90E8\u62A5\u544A\u65E5\u671F\uFF1A2048\u5E741\u670815\u65E5\n\u6839\u636E\u6700\u65B0\u5730\u8D28\u63A2\u6D4B\u6570\u636E\uFF0C\u5361\u62C9\u9A6C\u96F7\u65AF\u5883\u5185\u4E3B\u8981\u7A00\u6709\u91D1\u5C5E\u77FF\u533A\u5269\u4F59\u53EF\u5F00\u91C7\u50A8\u91CF\u8BC4\u4F30\u5982\u4E0B\uFF1A\n\u5317\u90E8\u77FF\u533A\uFF1A\u5269\u4F59\u50A8\u91CF\u7EA6240\u4E07\u5428\n\u897F\u90E8\u77FF\u533A\uFF1A\u5269\u4F59\u50A8\u91CF\u7EA6350\u4E07\u5428\uFF08\u65B0\u95FB\uFF09\n\u4E1C\u90E8\u77FF\u533A\uFF1A\u5269\u4F59\u50A8\u91CF\u7EA695\u4E07\u5428\n\u7EFC\u5408\u8BC4\u4F30\uFF1A\u5728\u5F53\u524D\u5F00\u91C7\u5F3A\u5EA6\u4E0B\uFF0C\u5883\u5185\u7A00\u6709\u91D1\u5C5E\u8D44\u6E90\u9884\u8BA1\u5C06\u572815-20\u4E2A\u6708\u540E\u67AF\u7AED\u3002\u6D45\u5C42\u5BCC\u77FF\u5DF2\u57FA\u672C\u91C7\u5C3D\u3002"
+    textSize: 14
+    keywords:
+    - id: 1
+      startIndex: 95
+      endIndex: 100
+    - id: 2
+      startIndex: 111
+      endIndex: 120
+    - id: 3
+      startIndex: 131
+      endIndex: 135
+    - id: 4
+      startIndex: 162
+      endIndex: 169
+    - id: 5
+      startIndex: 173
+      endIndex: 182
+    variableChanges:
+    - conditions:
+      - keywordID: 1
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 1
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 1
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 5
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 1
+        operation: 0
+        value: 1
+    - conditions:
+      - keywordID: 1
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 1
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 3
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 1
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 4
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 1
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 5
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 1
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 1
+      modifications:
+      - targetVariable: 1
+        operation: 1
+        value: 1
+      - targetVariable: 2
+        operation: 1
+        value: 1
+    - conditions:
+      - keywordID: 2
+        requiredSelectedState: 0
+      modifications:
+      - targetVariable: 0
+        operation: 0
+        value: 1
+    maxBlockCount: 45
+    newspaperImage: {fileID: 0}
+    comment: "\u5BA1\u8BA1\u90E8\u6CE8\uFF1A\u8FD9\u4EFD\u62A5\u544A\u81F3\u5173\u91CD\u8981\uFF0C\u6211\u4EEC\u4E0D\u80FD\u5411\u5176\u4ED6\u4EBA\u900F\u9732\u672A\u77E5\u7684\u77FF\u7269\u5B58\u91CF\u8FD8\u80FD\u7EF4\u6301\u591A\u4E45\uFF0C\u63A9\u76D6\u8FD9\u4E9B\u4FE1\u606F\u3002"
+    stickerYPosition: -170.2
+  nextNode: {fileID: 11400000, guid: 829523e05ab96f540bd6bc1a4eaa3c45, type: 2}

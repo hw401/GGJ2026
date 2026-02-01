@@ -717,13 +717,13 @@ public class LevelManager : Singleton<LevelManager>
             return;
         }
 
-        // 获取E变量的值
-        float eValue = VariableManager.Instance.GetValue(GameVariable.E);
+        // 获取民众信任度变量的值（原E变量）
+        float eValue = VariableManager.Instance.GetValue(GameVariable.民众信任度);
 
-        // 根据E的值判定：E=0为失败，E=1为成功
+        // 根据民众信任度的值判定：0为失败，1为成功
         bool success = Mathf.Approximately(eValue, 1f);
         
-        Debug.Log($"LevelManager: QTE判定，E值={eValue}，判定为{(success ? "成功" : "失败")}");
+        Debug.Log($"LevelManager: QTE判定，民众信任度值={eValue}，判定为{(success ? "成功" : "失败")}");
 
         // 处理QTE结果
         HandleQTEResult(success);
