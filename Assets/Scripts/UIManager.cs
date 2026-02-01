@@ -34,8 +34,18 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("贴纸GameObject")]
     public GameObject stickerObject;
 
+    [Tooltip("第一张贴纸GameObject")]
+    public GameObject firstStickerObject;
+
+    [Tooltip("第一张贴纸激活延迟时间（秒）")]
+    [SerializeField]
+    private float firstStickerDelayTime = 2f;
+
     [Tooltip("进入下一关按钮")]
     public Button nextLevelButton;
+
+    [Tooltip("下一关按钮的动画控制器")]
+    public Animator nextLevelButtonAnimator;
 
     [Header("提交按钮长按设置")]
     [Tooltip("提交按钮的填充Image（用于显示进度）")]
@@ -90,8 +100,6 @@ public class UIManager : Singleton<UIManager>
         if (nextLevelButton != null)
         {
             nextLevelButton.onClick.AddListener(OnNextLevelButtonClicked);
-            // 初始状态：隐藏进入下一关按钮（必须点了提交后才显示）
-            nextLevelButton.gameObject.SetActive(false);
         }
 
         // 初始化剩余黑块数显示
@@ -108,6 +116,33 @@ public class UIManager : Singleton<UIManager>
 
         // 初始化注释文本
         UpdateCommentText();
+
+        // 设置第一张贴纸和贴纸的默认状态（关闭）
+        if (firstStickerObject != null)
+        {
+            firstStickerObject.SetActive(false);
+        }
+        if (stickerObject != null)
+        {
+            stickerObject.SetActive(false);
+        }
+
+        // 启动协程，延迟激活第一张贴纸
+        StartCoroutine(ActivateFirstStickerAfterDelay());
+    }
+
+    /// <summary>
+    /// 延迟激活第一张贴纸的协程
+    /// </summary>
+    private System.Collections.IEnumerator ActivateFirstStickerAfterDelay()
+    {
+        yield return new WaitForSeconds(firstStickerDelayTime);
+        
+        if (firstStickerObject != null)
+        {
+            firstStickerObject.SetActive(true);
+            Debug.Log($"UIManager: 已激活第一张贴纸（延迟 {firstStickerDelayTime} 秒）");
+        }
     }
 
     void Update()
@@ -191,11 +226,11 @@ public class UIManager : Singleton<UIManager>
             int remaining = SelectionManager.instance.GetRemainingBlockCount();
             if (remaining <= 0)
             {
-                remainingBlockCountText.text = "黑块数已达上限";
+                remainingBlockCountText.text = "█████：0";
             }
             else
             {
-                remainingBlockCountText.text = $"剩余黑块数：{remaining}";
+                remainingBlockCountText.text = $"█████：{remaining}";
             }
         }
     }
@@ -221,11 +256,11 @@ public class UIManager : Singleton<UIManager>
                 int remaining = maxBlockCount - totalAfterAdd;
                 if (remaining <= 0)
                 {
-                    remainingBlockCountText.text = "黑块数已达上限";
+                    remainingBlockCountText.text = "█████：0";
                 }
                 else
                 {
-                    remainingBlockCountText.text = $"剩余黑块数：{remaining}";
+                    remainingBlockCountText.text = $"█████：{remaining}";
                 }
             }
             else
@@ -582,17 +617,18 @@ public class UIManager : Singleton<UIManager>
             Debug.LogWarning("UIManager: 当前节点没有配置报纸图片");
         }
 
-        // 触发报纸动画
+        // 触发报纸动画（播放"报纸向左"）
         if (newspaperAnimator != null)
         {
-            newspaperAnimator.enabled = true;
-            Debug.Log("UIManager: 已打开报纸动画");
+            newspaperAnimator.Play("报纸向左");
+            Debug.Log("UIManager: 已播放报纸向左动画");
         }
 
-        // 显示进入下一关按钮
-        if (nextLevelButton != null)
+        // 显示进入下一关按钮（播放"文件袋出现"动画）
+        if (nextLevelButtonAnimator != null)
         {
-            nextLevelButton.gameObject.SetActive(true);
+            nextLevelButtonAnimator.Play("文件袋出现");
+            Debug.Log("UIManager: 已播放文件袋出现动画");
         }
     }
 
@@ -629,10 +665,18 @@ public class UIManager : Singleton<UIManager>
             }
         }
 
-        // 跳转节点后，隐藏进入下一关按钮（需要再次提交后才能显示）
-        if (nextLevelButton != null)
+        // 跳转节点后，隐藏进入下一关按钮（播放"文件袋弹回"动画）
+        if (nextLevelButtonAnimator != null)
         {
-            nextLevelButton.gameObject.SetActive(false);
+            nextLevelButtonAnimator.Play("文件袋弹回");
+            Debug.Log("UIManager: 已播放文件袋弹回动画");
+        }
+
+        // 播放报纸向上动画
+        if (newspaperAnimator != null)
+        {
+            newspaperAnimator.Play("报纸向上");
+            Debug.Log("UIManager: 已播放报纸向上动画");
         }
 
         // 重置提交状态，允许再次提交

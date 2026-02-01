@@ -7,6 +7,19 @@ public class VariableManager : MonoBehaviour
 
     private Dictionary<GameVariable, float> _variables = new Dictionary<GameVariable, float>();
 
+    [Header("变量初始值")]
+    [Tooltip("政府信任度初始值")]
+    [SerializeField]
+    private float governmentTrustInitialValue = 0f;
+
+    [Tooltip("政府公信力初始值")]
+    [SerializeField]
+    private float governmentCredibilityInitialValue = 0f;
+
+    [Tooltip("民众信任度初始值")]
+    [SerializeField]
+    private float publicTrustInitialValue = 0f;
+
     // 事件系统：当变量改变时通知UI更新
     public event System.Action<GameVariable, float> OnVariableChanged;
 
@@ -15,10 +28,26 @@ public class VariableManager : MonoBehaviour
         if (Instance == null) Instance = this;
         else Destroy(gameObject);
 
-        // 初始化变量
+        // 初始化变量，使用配置的初始值
         foreach (GameVariable varType in System.Enum.GetValues(typeof(GameVariable)))
         {
-            _variables[varType] = 0f;
+            float initialValue = 0f;
+            
+            // 根据变量类型设置对应的初始值
+            switch (varType)
+            {
+                case GameVariable.政府信任度:
+                    initialValue = governmentTrustInitialValue;
+                    break;
+                case GameVariable.政府公信力:
+                    initialValue = governmentCredibilityInitialValue;
+                    break;
+                case GameVariable.民众信任度:
+                    initialValue = publicTrustInitialValue;
+                    break;
+            }
+            
+            _variables[varType] = initialValue;
         }
     }
 

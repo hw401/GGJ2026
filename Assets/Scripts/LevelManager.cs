@@ -15,6 +15,9 @@ public class LevelManager : Singleton<LevelManager>
     [Tooltip("当前选中的节点")]
     public BaseNodeSO currentNode;
 
+    private bool isInitialized = false; // 是否已经初始化
+    private bool isFirstNodeSwitch = false; // 是否是第一次切换节点
+
     /// <summary>
     /// 初始化节点图，从起始节点开始
     /// </summary>
@@ -34,6 +37,9 @@ public class LevelManager : Singleton<LevelManager>
 
         currentNode = nodeGraph.startNode;
         Debug.Log($"LevelManager: 已初始化节点图 '{nodeGraph.graphName}'，当前节点: {currentNode.nodeName} (ID: {currentNode.NodeID})");
+        
+        isInitialized = true;
+        isFirstNodeSwitch = false; // 初始化不算切换
         
         // 通知UI更新
         OnNodeChanged();
@@ -139,6 +145,12 @@ public class LevelManager : Singleton<LevelManager>
             ProcessVariableChangesForCurrentNode(textComponent);
         }
 
+        // 检查是否是第一次切换节点（初始化后第一次切换）
+        if (isInitialized && !isFirstNodeSwitch)
+        {
+            isFirstNodeSwitch = true;
+        }
+        
         currentNode = targetNode;
         Debug.Log($"LevelManager: 移动到节点: {currentNode.nodeName} (ID: {currentNode.NodeID})");
         
@@ -629,6 +641,24 @@ public class LevelManager : Singleton<LevelManager>
             UIManager.instance.UpdateContentInputField();
             UIManager.instance.UpdateCommentText();
             UIManager.instance.UpdateStickerPosition();
+        }
+
+        // 第一次切换节点时，激活贴纸并关闭第一张贴纸
+        if (isFirstNodeSwitch && UIManager.instance != null)
+        {
+            if (UIManager.instance.stickerObject != null)
+            {
+                UIManager.instance.stickerObject.SetActive(true);
+                Debug.Log("LevelManager: 第一次切换节点，已激活贴纸");
+            }
+            
+            if (UIManager.instance.firstStickerObject != null)
+            {
+                UIManager.instance.firstStickerObject.SetActive(false);
+                Debug.Log("LevelManager: 第一次切换节点，已关闭第一张贴纸");
+            }
+            
+            isFirstNodeSwitch = false; // 只激活一次
         }
 
         // 处理QTE节点的倒计时
