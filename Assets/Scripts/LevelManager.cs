@@ -46,7 +46,7 @@ public class LevelManager : Singleton<LevelManager>
     /// </summary>
     /// <param name="skipVariableProcessing">是否跳过变量变更处理（如果已经在外部处理过）</param>
     /// <returns>是否成功移动到下一个节点</returns>
-    public bool MoveToNextNode(bool skipVariableProcessing = false)
+    public bool MoveToNextNode(bool skipVariableProcessing = true)
     {
         if (currentNode == null)
         {
