@@ -117,7 +117,7 @@ public class LevelManager : Singleton<LevelManager>
     /// <param name="skipVariableProcessing">是否跳过变量变更处理（如果已经在外部处理过）</param>
     /// <param name="textComponent">可选的文本组件，用于检查关键词状态</param>
     /// <returns>是否成功移动</returns>
-    public bool MoveToNode(BaseNodeSO targetNode, bool skipVariableProcessing = false, TMPro.TMP_Text textComponent = null)
+    public bool MoveToNode(BaseNodeSO targetNode, bool skipVariableProcessing = true, TMPro.TMP_Text textComponent = null)
     {
         if (targetNode == null)
         {
