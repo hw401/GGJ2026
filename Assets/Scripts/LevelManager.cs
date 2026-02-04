@@ -138,6 +138,27 @@ public class LevelManager : Singleton<LevelManager>
             return false;
         }
 
+        // 检查目标节点是否是BE1或BE2，如果是，需要先激活溅血特效和播放枪声，等待3秒后再切换
+        if (targetNode.GetNodeType() == NodeType.End)
+        {
+            EndNodeSO endNode = targetNode as EndNodeSO;
+            if (endNode != null && (endNode.nodeName == "BE1" || endNode.nodeName == "BE2"))
+            {
+                // 启动协程处理BE1/BE2的特殊逻辑
+                StartCoroutine(MoveToBE1BE2NodeWithDelay(targetNode, skipVariableProcessing, textComponent));
+                return true; // 返回true表示已开始处理
+            }
+        }
+
+        // 正常切换节点
+        return MoveToNodeInternal(targetNode, skipVariableProcessing, textComponent);
+    }
+
+    /// <summary>
+    /// 内部方法：实际执行节点切换
+    /// </summary>
+    private bool MoveToNodeInternal(BaseNodeSO targetNode, bool skipVariableProcessing, TMPro.TMP_Text textComponent)
+    {
         // 在切换节点前，处理当前节点的变量变更规则（如果当前节点有内容）
         // 如果 skipVariableProcessing 为 true，则跳过（已经在外部处理过）
         if (!skipVariableProcessing)
@@ -158,6 +179,99 @@ public class LevelManager : Singleton<LevelManager>
         OnNodeChanged();
         
         return true;
+    }
+
+    /// <summary>
+    /// 协程：处理BE1/BE2节点的延迟切换（先激活溅血特效和播放枪声，等待3秒后再切换节点）
+    /// </summary>
+    private System.Collections.IEnumerator MoveToBE1BE2NodeWithDelay(BaseNodeSO targetNode, bool skipVariableProcessing, TMPro.TMP_Text textComponent)
+    {
+        // 1. 立即激活溅血特效
+        if (UIManager.instance != null && UIManager.instance.bloodSplashEffect != null)
+        {
+            UIManager.instance.bloodSplashEffect.SetActive(true);
+            Debug.Log($"LevelManager: 已激活溅血特效（目标节点: {targetNode.nodeName}）");
+        }
+
+        // 2. 立即播放枪声
+        if (UIManager.instance != null && UIManager.instance.cgImage != null)
+        {
+            AudioSource[] audioSources = UIManager.instance.cgImage.GetComponents<AudioSource>();
+            if (audioSources != null && audioSources.Length > 0)
+            {
+                // 查找并播放枪声
+                AudioSource gunSound = FindAudioSourceByClipName(audioSources, "枪声2");
+                if (gunSound == null)
+                {
+                    gunSound = FindAudioSourceByClipNameContains(audioSources, "枪声");
+                }
+                
+                if (gunSound != null && gunSound.clip != null)
+                {
+                    gunSound.Play();
+                    Debug.Log($"LevelManager: 已播放枪声2音效: {gunSound.clip.name}");
+                }
+                else
+                {
+                    Debug.LogWarning("LevelManager: 未找到枪声2音效");
+                }
+            }
+        }
+
+        // 3. 等待3秒
+        yield return new WaitForSeconds(3f);
+
+        // 4. 切换节点
+        MoveToNodeInternal(targetNode, skipVariableProcessing, textComponent);
+        
+        // 5. 关闭溅血特效
+        if (UIManager.instance != null && UIManager.instance.bloodSplashEffect != null)
+        {
+            UIManager.instance.bloodSplashEffect.SetActive(false);
+            Debug.Log($"LevelManager: 已关闭溅血特效（节点已切换: {targetNode.nodeName}）");
+        }
+    }
+
+    /// <summary>
+    /// 通过AudioClip名称查找AudioSource
+    /// </summary>
+    private AudioSource FindAudioSourceByClipName(AudioSource[] audioSources, string clipName)
+    {
+        if (audioSources == null || string.IsNullOrEmpty(clipName))
+        {
+            return null;
+        }
+        
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (audioSource != null && audioSource.clip != null && audioSource.clip.name == clipName)
+            {
+                return audioSource;
+            }
+        }
+        
+        return null;
+    }
+
+    /// <summary>
+    /// 通过AudioClip名称包含指定字符串查找AudioSource
+    /// </summary>
+    private AudioSource FindAudioSourceByClipNameContains(AudioSource[] audioSources, string clipNameContains)
+    {
+        if (audioSources == null || string.IsNullOrEmpty(clipNameContains))
+        {
+            return null;
+        }
+        
+        foreach (AudioSource audioSource in audioSources)
+        {
+            if (audioSource != null && audioSource.clip != null && audioSource.clip.name.Contains(clipNameContains))
+            {
+                return audioSource;
+            }
+        }
+        
+        return null;
     }
 
     /// <summary>

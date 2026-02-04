@@ -22,7 +22,6 @@ public class SelectionMaskUI : MonoBehaviour
     public float maskAlpha = 0.3f;
 
     private RectTransform textRectTransform;
-    private Canvas canvas;
     
     // 每个Range对应的遮罩对象列表（一个Range可能对应多个遮罩，因为跨行）
     private Dictionary<Range, List<GameObject>> rangeMaskObjects = new Dictionary<Range, List<GameObject>>();
@@ -62,13 +61,13 @@ public class SelectionMaskUI : MonoBehaviour
         textRectTransform = textComponent.rectTransform;
 
         // 获取 Canvas
-        canvas = GetComponentInParent<Canvas>();
-        if (canvas == null)
+        Canvas foundCanvas = GetComponentInParent<Canvas>();
+        if (foundCanvas == null)
         {
-            canvas = FindObjectOfType<Canvas>();
+            foundCanvas = FindObjectOfType<Canvas>();
         }
 
-        if (canvas == null)
+        if (foundCanvas == null)
         {
             Debug.LogError("SelectionMaskUI: 找不到 Canvas！");
             return;
@@ -111,117 +110,6 @@ public class SelectionMaskUI : MonoBehaviour
         maskCanvasGroup.ignoreParentGroups = false;
 
         return maskObject;
-    }
-
-    /// <summary>
-    /// 计算一个Range对应的所有矩形（按行拆分）
-    /// 返回每行的最小/最大坐标（相对于pivot）
-    /// </summary>
-    private List<(float minX, float maxX, float minY, float maxY)> CalculateRangeRects(Range range, TMP_Text tmpText)
-    {
-        var rects = new List<(float minX, float maxX, float minY, float maxY)>();
-
-        if (tmpText == null || tmpText.textInfo == null) return rects;
-
-        // 确保文本已更新
-        tmpText.ForceMeshUpdate();
-
-        int currentLine = -1;
-        List<int> indicesInThisLine = new List<int>();
-
-        for (int i = range.startIndex; i <= range.endIndex; i++)
-        {
-            if (i < 0 || i >= tmpText.textInfo.characterCount) continue;
-            
-            var charInfo = tmpText.textInfo.characterInfo[i];
-            int line = charInfo.lineNumber;
-
-            if (line != currentLine)
-            {
-                if (indicesInThisLine.Count > 0)
-                {
-                    var (minX, maxX, minY, maxY) = CalcOneLineRect(indicesInThisLine, tmpText);
-                    float width = maxX - minX;
-                    float height = maxY - minY;
-                    if (width > 0 && height > 0)
-                    {
-                        rects.Add((minX, maxX, minY, maxY));
-                    }
-                    indicesInThisLine.Clear();
-                }
-
-                currentLine = line;
-            }
-            indicesInThisLine.Add(i);
-        }
-
-        if (indicesInThisLine.Count > 0)
-        {
-            var (minX, maxX, minY, maxY) = CalcOneLineRect(indicesInThisLine, tmpText);
-            float width = maxX - minX;
-            float height = maxY - minY;
-            if (width > 0 && height > 0)
-            {
-                rects.Add((minX, maxX, minY, maxY));
-            }
-        }
-
-        return rects;
-    }
-
-    /// <summary>
-    /// 计算一行中指定字符索引列表的矩形
-    /// 返回 (minX, maxX, minY, maxY) 相对于 pivot
-    /// </summary>
-    private (float minX, float maxX, float minY, float maxY) CalcOneLineRect(List<int> indices, TMP_Text tmpText)
-    {
-        float minX = float.MaxValue, maxX = float.MinValue;
-        float minY = float.MaxValue, maxY = float.MinValue;
-        bool hasVisibleChar = false;
-
-        foreach (int idx in indices)
-        {
-            if (idx < 0 || idx >= tmpText.textInfo.characterCount) continue;
-            
-            var c = tmpText.textInfo.characterInfo[idx];
-            if (!c.isVisible) continue; // 跳过不可见字符
-
-            // 使用字符的顶点坐标（这些坐标是相对于文本 RectTransform 的局部坐标）
-            Vector3 topLeft = c.topLeft;
-            Vector3 topRight = c.topRight;
-            Vector3 bottomLeft = c.bottomLeft;
-            Vector3 bottomRight = c.bottomRight;
-
-            // 验证坐标是否有效
-            if (Mathf.Abs(topLeft.x) > 10000f || Mathf.Abs(bottomRight.x) > 10000f ||
-                Mathf.Abs(topLeft.y) > 10000f || Mathf.Abs(bottomRight.y) > 10000f)
-            {
-                continue;
-            }
-
-            if (!hasVisibleChar)
-            {
-                minX = Mathf.Min(topLeft.x, bottomLeft.x);
-                maxX = Mathf.Max(topRight.x, bottomRight.x);
-                minY = Mathf.Min(bottomLeft.y, bottomRight.y); // y 轴向下，所以 bottom 是 minY
-                maxY = Mathf.Max(topLeft.y, topRight.y); // top 是 maxY
-                hasVisibleChar = true;
-            }
-            else
-            {
-                minX = Mathf.Min(minX, topLeft.x, bottomLeft.x);
-                maxX = Mathf.Max(maxX, topRight.x, bottomRight.x);
-                minY = Mathf.Min(minY, bottomLeft.y, bottomRight.y);
-                maxY = Mathf.Max(maxY, topLeft.y, topRight.y);
-            }
-        }
-
-        if (!hasVisibleChar)
-        {
-            return (0, 0, 0, 0);
-        }
-
-        return (minX, maxX, minY, maxY);
     }
 
     /// <summary>

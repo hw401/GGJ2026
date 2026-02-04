@@ -29,6 +29,9 @@ public class UIManager : Singleton<UIManager>
     [Tooltip("CG图片（用于显示结局CG）")]
     public UnityEngine.UI.Image cgImage;
 
+    [Tooltip("溅血特效GameObject")]
+    public GameObject bloodSplashEffect;
+
     [Tooltip("转场GameObject")]
     public GameObject transitionGameObject;
 
@@ -53,6 +56,9 @@ public class UIManager : Singleton<UIManager>
 
     [Tooltip("下一关按钮的动画控制器")]
     public Animator nextLevelButtonAnimator;
+
+    [Tooltip("打字机效果组件")]
+    public TypewriterEffect typewriterEffect;
 
     [Header("提交按钮长按设置")]
     [Tooltip("提交按钮的填充Image（用于显示进度）")]
@@ -134,10 +140,14 @@ public class UIManager : Singleton<UIManager>
             stickerObject.SetActive(false);
         }
 
-        // 设置CG Image和转场GameObject的默认状态（关闭）
+        // 设置CG Image、溅血特效和转场GameObject的默认状态（关闭）
         if (cgImage != null)
         {
             cgImage.enabled = false;
+        }
+        if (bloodSplashEffect != null)
+        {
+            bloodSplashEffect.SetActive(false);
         }
         if (transitionGameObject != null)
         {
@@ -385,10 +395,40 @@ public class UIManager : Singleton<UIManager>
             {
                 contentInputField.textComponent.fontSize = textSize;
             }
+            
+            // 处理打字机效果：如果TypewriterEffect存在
+            if (contentInputField.textComponent != null && typewriterEffect != null)
+            {
+                if (typewriterEffect.enabled)
+                {
+                    // 如果打字机效果启用，使用SetTextAndPlay来更新文本并重新开始打字机效果
+                    typewriterEffect.SetTextAndPlay(contentInputField.text);
+                }
+                else
+                {
+                    // 如果打字机效果已禁用，需要重置maxVisibleCharacters以确保完整显示
+                    // 强制更新网格以获取正确的字符数
+                    contentInputField.textComponent.ForceMeshUpdate();
+                    if (contentInputField.textComponent.textInfo != null)
+                    {
+                        contentInputField.textComponent.maxVisibleCharacters = contentInputField.textComponent.textInfo.characterCount;
+                    }
+                }
+            }
         }
         else
         {
             contentInputField.text = "";
+            
+            // 如果文本为空，也需要重置maxVisibleCharacters
+            if (contentInputField.textComponent != null && typewriterEffect != null && !typewriterEffect.enabled)
+            {
+                contentInputField.textComponent.ForceMeshUpdate();
+                if (contentInputField.textComponent.textInfo != null)
+                {
+                    contentInputField.textComponent.maxVisibleCharacters = contentInputField.textComponent.textInfo.characterCount;
+                }
+            }
         }
     }
 
@@ -535,6 +575,13 @@ public class UIManager : Singleton<UIManager>
     /// </summary>
     private void OnSubmitButtonClicked()
     {
+        // 第一次提交完成时，禁用打字机效果
+        if (!hasSubmitted && typewriterEffect != null)
+        {
+            typewriterEffect.enabled = false;
+            Debug.Log("UIManager: 第一次提交完成，已禁用打字机效果");
+        }
+
         // 关闭第一张贴纸
         if (firstStickerObject != null)
         {
@@ -791,24 +838,91 @@ public class UIManager : Singleton<UIManager>
             EndNodeSO endNode = currentNode as EndNodeSO;
             if (endNode != null && endNode.cgImage != null)
             {
-                cgImage.sprite = endNode.cgImage;
-                cgImage.enabled = true; // 开启Image组件
-                Debug.Log($"UIManager: 已更新CG图片并开启Image组件: {endNode.cgImage.name}");
+                string nodeName = endNode.nodeName;
                 
-                // 根据节点名称播放相应的音效序列
-                PlayEndingSoundEffects(endNode);
+                // 如果是BE1或BE2节点，显示CG图片并播放心跳声（溅血特效和枪声已在节点切换前处理）
+                if (nodeName == "BE1" || nodeName == "BE2")
+                {
+                    // 显示CG图片
+                    cgImage.sprite = endNode.cgImage;
+                    cgImage.enabled = true;
+                    Debug.Log($"UIManager: 已更新CG图片并开启Image组件: {endNode.cgImage.name}");
+                    
+                    // 播放心跳声
+                    PlayHeartbeatSound();
+                }
+                else
+                {
+                    // 其他End节点，正常处理
+                    cgImage.sprite = endNode.cgImage;
+                    cgImage.enabled = true; // 开启Image组件
+                    Debug.Log($"UIManager: 已更新CG图片并开启Image组件: {endNode.cgImage.name}");
+                    
+                    // 根据节点名称播放相应的音效序列
+                    PlayEndingSoundEffects(endNode);
+                    
+                    // 关闭溅血特效
+                    if (bloodSplashEffect != null)
+                    {
+                        bloodSplashEffect.SetActive(false);
+                    }
+                }
             }
-            else
+            else if (endNode != null)
             {
-                Debug.LogWarning("UIManager: End节点没有配置CG图片");
+                // End节点但没有CG图片
+                string nodeName = endNode.nodeName;
+                if (nodeName != "BE1" && nodeName != "BE2")
+                {
+                    // 非BE1/BE2节点，关闭溅血特效
+                    if (bloodSplashEffect != null)
+                    {
+                        bloodSplashEffect.SetActive(false);
+                    }
+                }
             }
         }
         else
         {
-            // 如果不是End节点，关闭CG Image组件
+            // 如果不是End节点，关闭CG Image组件和溅血特效
             if (cgImage != null)
             {
                 cgImage.enabled = false;
+            }
+            if (bloodSplashEffect != null)
+            {
+                bloodSplashEffect.SetActive(false);
+            }
+        }
+    }
+
+    /// <summary>
+    /// 播放心跳声音效（用于BE1/BE2节点）
+    /// </summary>
+    private void PlayHeartbeatSound()
+    {
+        if (cgImage == null)
+        {
+            return;
+        }
+
+        AudioSource[] audioSources = cgImage.GetComponents<AudioSource>();
+        if (audioSources != null && audioSources.Length > 0)
+        {
+            AudioSource heartbeatSound = FindAudioSourceByClipName(audioSources, "心跳声");
+            if (heartbeatSound == null)
+            {
+                heartbeatSound = FindAudioSourceByClipNameContains(audioSources, "心跳");
+            }
+            
+            if (heartbeatSound != null && heartbeatSound.clip != null)
+            {
+                heartbeatSound.Play();
+                Debug.Log($"UIManager: 已播放心跳声音效: {heartbeatSound.clip.name}");
+            }
+            else
+            {
+                Debug.LogWarning("UIManager: 未找到心跳声音效");
             }
         }
     }

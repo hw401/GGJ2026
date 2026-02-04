@@ -19,16 +19,10 @@ public class AutoScrollView : MonoBehaviour
     [Tooltip("到达底部后要激活的GameObject")]
     public GameObject targetGameObjectOnReachBottom;
 
-    [Tooltip("到达底部后延迟激活的时间（秒）")]
-    [SerializeField]
-    [Range(0f, 10f)]
-    private float delayBeforeActivate = 2f;
-
     private ScrollRect scrollRect;
     private RectTransform content;
     private bool isScrolling = false;
     private Coroutine scrollCoroutine;
-    private Coroutine activateCoroutine;
     private bool hasReachedBottom = false; // 标记是否已经到达过底部
 
     void Awake()
@@ -67,12 +61,6 @@ public class AutoScrollView : MonoBehaviour
     void OnDisable()
     {
         StopAutoScroll();
-        // 停止激活协程
-        if (activateCoroutine != null)
-        {
-            StopCoroutine(activateCoroutine);
-            activateCoroutine = null;
-        }
     }
 
     /// <summary>
@@ -142,15 +130,12 @@ public class AutoScrollView : MonoBehaviour
                     // 停止滚动
                     isScrolling = false;
                     
-                    // 延迟激活目标GameObject（只激活一次）
+                    // 直接激活目标GameObject（只激活一次）
                     if (!hasReachedBottom && targetGameObjectOnReachBottom != null)
                     {
                         hasReachedBottom = true;
-                        if (activateCoroutine != null)
-                        {
-                            StopCoroutine(activateCoroutine);
-                        }
-                        activateCoroutine = StartCoroutine(ActivateGameObjectAfterDelay());
+                        targetGameObjectOnReachBottom.SetActive(true);
+                        Debug.Log("AutoScrollView: 已到达底部，已激活目标GameObject");
                     }
                     
                     break;
@@ -169,15 +154,12 @@ public class AutoScrollView : MonoBehaviour
                     scrollRect.verticalNormalizedPosition = 0f;
                     isScrolling = false;
                     
-                    // 延迟激活目标GameObject（只激活一次）
+                    // 直接激活目标GameObject（只激活一次）
                     if (!hasReachedBottom && targetGameObjectOnReachBottom != null)
                     {
                         hasReachedBottom = true;
-                        if (activateCoroutine != null)
-                        {
-                            StopCoroutine(activateCoroutine);
-                        }
-                        activateCoroutine = StartCoroutine(ActivateGameObjectAfterDelay());
+                        targetGameObjectOnReachBottom.SetActive(true);
+                        Debug.Log("AutoScrollView: 已到达底部，已激活目标GameObject");
                     }
                     
                     break;
@@ -238,22 +220,6 @@ public class AutoScrollView : MonoBehaviour
     public void SetScrollSpeed(float speed)
     {
         scrollSpeed = Mathf.Max(0f, speed);
-    }
-
-    /// <summary>
-    /// 延迟激活GameObject的协程
-    /// </summary>
-    private IEnumerator ActivateGameObjectAfterDelay()
-    {
-        yield return new WaitForSeconds(delayBeforeActivate);
-        
-        if (targetGameObjectOnReachBottom != null)
-        {
-            targetGameObjectOnReachBottom.SetActive(true);
-            Debug.Log($"AutoScrollView: 已到达底部，延迟 {delayBeforeActivate} 秒后激活目标GameObject");
-        }
-        
-        activateCoroutine = null;
     }
 
 }
