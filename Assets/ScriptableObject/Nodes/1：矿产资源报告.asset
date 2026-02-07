@@ -137,7 +137,7 @@ MonoBehaviour:
         operation: 0
         value: 1
     maxBlockCount: 45
-    newspaperImage: {fileID: 21300000, guid: 88aeb7b22f23f3c47bb42ecac6e7417c, type: 3}
+    newspaperImage: {fileID: 21300000, guid: fe24f9d784a529d499e82a81b1de8006, type: 3}
     comment: "\u5BA1\u8BA1\u90E8\u6CE8\uFF1A\u8FD9\u4EFD\u62A5\u544A\u81F3\u5173\u91CD\u8981\uFF0C\u6211\u4EEC\u4E0D\u80FD\u5411\u5176\u4ED6\u4EBA\u900F\u9732\u672A\u77E5\u7684\u77FF\u7269\u5B58\u91CF\u8FD8\u80FD\u7EF4\u6301\u591A\u4E45\uFF0C\u63A9\u76D6\u8FD9\u4E9B\u4FE1\u606F\u3002"
     stickerYPosition: -170.2
   nextNode: {fileID: 11400000, guid: 829523e05ab96f540bd6bc1a4eaa3c45, type: 2}
